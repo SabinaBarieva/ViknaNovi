@@ -29,6 +29,9 @@
     padding-left: 2rem; /* 32px */
     padding-right: 2rem;
   }
+  .title {
+      font-size: 26px;
+  }
 }
 
 @media (min-width: 1280px) {
