@@ -10,7 +10,7 @@ import PromoModal from '@/components/PromoModal';
 
 import ReviewsSection from '@/components/ReviewsSection';
 import SaleSlider from '@/components/SaleSlider';
-import SaleSliderServer from '@/components/SaleSliderServer.tsx';
+import SaleSliderServer from '@/components/SaleSliderServer';
 import ServicesSection from '@/components/ServicesSection';
 import StepsSection from '@/components/StepsSection';
 import BannerSlider from '@/components/Swiper';
