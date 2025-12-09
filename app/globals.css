@@ -1,26 +1,48 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+.title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;          /* SemiBold */
+  font-size: 38px;
+  line-height: 100%;         /* 1 */
+  letter-spacing: 0;
+  text-transform: uppercase; /* Uppercase */
+  color: var(--color-primary);
+  padding-bottom: 25px;
+
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.container {
+  width: 100%;
+  max-width: 1280px; /* или 1440, зависит от макета */
+  margin: 0 auto;
+  padding-left: 1rem; /* 16px */
+  padding-right: 1rem;
+  padding-bottom: 30px;
+  
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@media (min-width: 768px) {
+  .container {
+    padding-left: 2rem; /* 32px */
+    padding-right: 2rem;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@media (min-width: 1280px) {
+  .container {
+    padding-left: 1rem; /* 48px */
+    padding-right: 1rem;
+  }
+}
+
+:root {
+    --site-bg: #EDEEEF;
+      --color-primary: #1A32AF;
+}
+
+html, body {
+  background-color: var(--site-bg);
 }
