@@ -10,30 +10,23 @@ export default function ReviewsSection() {
 
   const [page, setPage] = useState(0);
   const [expanded, setExpanded] = useState<number | null>(null);
-  const [perPage, setPerPage] = useState(2);
   const [isDesktop, setIsDesktop] = useState(false);
 
   const sliderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const mql = window.matchMedia("(min-width: 768px)");
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
     setIsDesktop(mql.matches);
-
-    const handleResize = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
-    mql.addEventListener("change", handleResize);
-    return () => mql.removeEventListener("change", handleResize);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
   }, []);
 
-  const totalPages = isDesktop
-    ? reviews.length
-    : Math.ceil(reviews.length / perPage);
-
-  const start = isDesktop ? page : page * perPage;
-  const visible = isDesktop ? reviews : reviews.slice(start, start + perPage);
+  const totalPages = isDesktop ? reviews.length : reviews.length;
 
   useEffect(() => {
-    if (isDesktop && sliderRef.current) {
-      const cardWidth = 320;
+    if (sliderRef.current) {
+      const cardWidth = isDesktop ? 320 + 24 : sliderRef.current.offsetWidth;
       sliderRef.current.style.transform = `translateX(-${page * cardWidth}px)`;
     }
   }, [page, isDesktop]);
@@ -101,46 +94,14 @@ export default function ReviewsSection() {
         </div>
       </div>
 
-      {isDesktop ? (
-        <div className="w-full overflow-hidden">
-          <div
-            ref={sliderRef}
-            className="flex gap-6 transition-transform duration-500 ease-out"
-          >
-            {reviews.map((item: any, i: number) => (
-              <ReviewCard
-                key={i}
-                item={item}
-                index={i}
-                expanded={expanded}
-                setExpanded={setExpanded}
-              />
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div className="grid gap-6 mx-auto grid-cols-1">
-          {visible.map((item: any, i: number) => {
-            const id = start + i;
-            return (
-              <ReviewCard
-                key={id}
-                item={item}
-                index={id}
-                expanded={expanded}
-                setExpanded={setExpanded}
-              />
-            );
-          })}
-
-          <div className="flex justify-end gap-3 mt-6">
+      <div className="relative w-full overflow-hidden">
+        {!isDesktop && (
+          <>
             <button
               onClick={prev}
               disabled={isFirst}
               aria-label="Назад"
-              className={`w-10 h-10 border border-blue-700 flex items-center justify-center transition ${
-                isFirst ? "opacity-30 cursor-not-allowed" : "text-blue-700"
-              }`}
+              className="absolute left-2 top-1/2 -translate-y-1/2 z-10  w-10 h-10 bg-white/80 text-blue-700 hover:bg-white rounded-md shadow-md disabled:opacity-30"
             >
               &lt;
             </button>
@@ -148,15 +109,28 @@ export default function ReviewsSection() {
               onClick={next}
               disabled={isLast}
               aria-label="Вперёд"
-              className={`w-10 h-10 border border-blue-700 flex items-center justify-center transition ${
-                isLast ? "opacity-30 cursor-not-allowed" : "text-blue-700"
-              }`}
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-10  w-10 h-10 bg-white/80 text-blue-700 hover:bg-white rounded-md shadow-md disabled:opacity-30"
             >
               &gt;
             </button>
-          </div>
+          </>
+        )}
+
+        <div
+          ref={sliderRef}
+          className="flex gap-2 transition-transform duration-500 ease-out"
+        >
+          {reviews.map((item: any, i: number) => (
+            <ReviewCard
+              key={i}
+              item={item}
+              index={i}
+              expanded={expanded}
+              setExpanded={setExpanded}
+            />
+          ))}
         </div>
-      )}
+      </div>
     </section>
   );
 }
@@ -176,7 +150,7 @@ function ReviewCard({
   const isOpen = expanded === index;
 
   return (
-    <div className="bg-white p-5 min-w-[300px] max-w-[300px]">
+    <div className="bg-white p-5 min-w-full md:min-w-[300px] max-w-[300px]">
       <AnimatePresence mode="wait">
         <motion.p
           className="text-[16px] mb-4 font-opensans font-normal"

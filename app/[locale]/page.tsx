@@ -35,7 +35,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <WindowSVGDesigner/>
       <FurnituraSection/>
 
-            <SaleSliderServer lang={lang} /> {/* ✅ используем компонент со слайдерами */}
+            <SaleSliderServer lang={lang} /> 
              <Portfolio/>
       <AdvantagesSection/>
                   <MeasureForm/>

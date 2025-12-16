@@ -52,8 +52,8 @@ export default function Header() {
         </div>
 
         {/* Десктоп логотип */}
-        <div className="hidden lg:block xl:hidden w-[147px] h-[31px]">
-          <Image src="/logo.svg" alt="Logo" width={147} height={31} className="w-full h-auto" />
+        <div className="hidden lg:block xl:hidden w-[127px] h-[31px]">
+          <Image src="/logo.svg" alt="Logo" width={127} height={31} className="w-full h-auto" />
         </div>
         <div className="hidden xl:block w-[218px] h-[51.5px]">
           <Image src="/logo.svg" alt="Logo" width={218} height={51} className="w-full h-auto" />

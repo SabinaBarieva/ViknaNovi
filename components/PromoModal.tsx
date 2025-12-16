@@ -115,7 +115,7 @@ export default function PromoModal() {
         {/* ❌ Close */}
         <button
           onClick={() => setOpen(false)}
-          className="text-[25px] absolute right-3 top-0 z-20 text-white/60 hover:text-white"
+          className="text-[30px] absolute right-2 top-0 z-20 text-white/60 hover:text-white"
         >
           ✕
         </button>

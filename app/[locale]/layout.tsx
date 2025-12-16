@@ -34,7 +34,6 @@ export default async function LocaleLayout({ children, params }: any) {
           <Footer />
         </NextIntlClientProvider>
 
-        {/* 🔥 ПОРТАЛ ДЛЯ МОДАЛЬНИХ ВІКОН */}
         <div id="modal-root"></div>
 
       </body>
