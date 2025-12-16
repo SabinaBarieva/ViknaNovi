@@ -34,15 +34,16 @@ export default function ProfileCard({ profile, locale }: Props) {
   );
 
   return (
-    <div className="bg-white p-5 flex flex-col relative">
+    <div className="bg-white h-full p-5 flex flex-col relative">
       {/* IMAGE */}
-      <div className="relative w-full flex justify-center mb-4">
+      <div className="relative w-full h-[200px] flex justify-center mb-4">
         <Image
           src={profile.image}
           alt={name}
           width={220}
-          height={260}
+          height={200}
           className="object-contain"
+          loading="lazy"
         />
       </div>
 

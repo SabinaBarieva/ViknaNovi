@@ -36,10 +36,9 @@ export default function PromoModal() {
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  // ✅ фикс для portal
   useEffect(() => setMounted(true), []);
 
-  // ✅ автопоказ
+
   useEffect(() => {
     const timer = setTimeout(() => setOpen(true), 800);
     return () => clearTimeout(timer);
@@ -47,7 +46,6 @@ export default function PromoModal() {
 
   if (!open || !mounted) return null;
 
-  // ✅ ВАЛИДАЦИЯ
   const validate = () => {
     const newErrors: FormErrors = {};
 
@@ -61,7 +59,6 @@ export default function PromoModal() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // ✅ ОТПРАВКА
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
@@ -88,14 +85,14 @@ export default function PromoModal() {
     setSending(false);
   };
 
-  // ✅ HANDLER
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
     setErrors({ ...errors, [name]: "" });
   };
 
-  // ✅ SUCCESS MODAL VIA PORTAL
+
   const successModal =
     success && mounted
       ? createPortal(
@@ -118,7 +115,7 @@ export default function PromoModal() {
         {/* ❌ Close */}
         <button
           onClick={() => setOpen(false)}
-          className="absolute right-3 top-3 z-20 text-white/60 hover:text-white"
+          className="text-[25px] absolute right-3 top-0 z-20 text-white/60 hover:text-white"
         >
           ✕
         </button>

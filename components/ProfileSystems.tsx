@@ -11,7 +11,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 
 const ALL_SEGMENTS: Segment[] = ["econom", "standard", "premium"];
-const ALL_BRANDS: Brand[] = ["ViknaNovi", "WDS", "Kommerling", "Profine"];
+const ALL_BRANDS: Brand[] = ["ViknaNovi", "WDS","Rehau"];
 
 export default function ProfileSystems() {
   const t = useTranslations("profileSystems");
@@ -42,38 +42,37 @@ export default function ProfileSystems() {
 
   return (
     <section id="profiles" className="container pt-[40px]">
-      <h2 className="title">
-        {t("title")}
-      </h2>
+      <h2 className="title">{t("title")}</h2>
 
       <div className="flex flex-col md:flex-row gap-5">
-
         {/* ФИЛЬТРЫ */}
-        <aside className="w-full h-max md:w-[260px] bg-white p-5 rounded shadow pr-[100px]">
+        <aside className="w-full h-max md:w-[260px] bg-white p-5 rounded shadow pr-[100px] z-10">
           <h3 className="text-[24px] font-mont uppercase font-semibold text-primary mb-8">
             {t("filters")}
           </h3>
 
-          <p className="mb-6 font-semibold font-mont text-[18px] uppercase  text-primary">{t("segment")}</p>
+          <p className="mb-6 font-semibold font-mont text-[18px] uppercase text-primary">
+            {t("segment")}
+          </p>
           <div className="flex flex-col gap-2 mb-5">
             {ALL_SEGMENTS.map((s) => (
-              <label key={s} className="flex gap-2 text-[16px] font-opensans font-normal text-secondary">
+              <label key={s} className="flex gap-2 text-[16px] font-opensans text-secondary">
                 <input
                   type="checkbox"
                   checked={segments.includes(s)}
                   onChange={() => toggleSegment(s)}
-                  
-                  
                 />
                 {t(`segments.${s}`)}
               </label>
             ))}
           </div>
 
-          <p className="mb-2 font-semiboldmb-6 font-semibold font-mont text-[18px] uppercase  text-primary">{t("brand")}</p>
+          <p className="mb-2 font-semibold font-mont text-[18px] uppercase text-primary">
+            {t("brand")}
+          </p>
           <div className="flex flex-col gap-2">
             {ALL_BRANDS.map((b) => (
-              <label key={b} className="flex gap-2 text-[16px] font-opensans font-normal text-secondary uppercase">
+              <label key={b} className="flex gap-2 text-[16px] font-opensans text-secondary uppercase">
                 <input
                   type="checkbox"
                   checked={brands.includes(b)}
@@ -85,86 +84,42 @@ export default function ProfileSystems() {
           </div>
         </aside>
 
-{/* ------------------ МОБИЛЬНЫЙ СЛАЙДЕР (2 В СТОЛБИК) ------------------ */}
-<div className="md:hidden w-full">
-
-  <Swiper
-    key={filtered.length}
-    slidesPerView={1}
-    slidesPerGroup={1}
-    spaceBetween={16}
-    modules={[Navigation]}
-    navigation={{
-      nextEl: ".profiles-next",
-      prevEl: ".profiles-prev",
-      disabledClass: "swiper-button-disabled",
-    }}
-    allowTouchMove={true}
-    autoHeight={true}
-    watchOverflow={true}
-  >
-    {(() => {
-      const pages = [];
-      for (let i = 0; i < filtered.length; i += 2) {
-        pages.push(filtered.slice(i, i + 2));
-      }
-      return pages;
-    })().map((pair, i) => (
-      <SwiperSlide key={i}>
-        
-        {/* ✅ ЖЁСТКО В СТОЛБИК */}
-        <div className="grid grid-cols-1 grid-rows-2 gap-4 w-full">
-          {pair.map((profile) => (
-            <div key={profile.id} className="w-full">
-              <ProfileCard profile={profile} locale={locale} />
-            </div>
-          ))}
-        </div>
-
-      </SwiperSlide>
-    ))}
-  </Swiper>
-
-  {/* КНОПКИ */}
-  <div className="flex justify-end gap-3 mt-4">
-    <button className="profiles-prev w-8 h-8 border border-blue-700 text-blue-700">
-      &lt;
-    </button>
-    <button className="profiles-next w-8 h-8 border border-blue-700 text-blue-700">
-      &gt;
-    </button>
-  </div>
-</div>
-
-
-
-        {/* ДЕСКТОПНЫЙ СЛАЙДЕР */}
-        <div className="hidden md:block w-full overflow-hidden">
+        {/* СЛАЙДЕР */}
+        <div className="w-full relative overflow-hidden">
           <Swiper
             key={filtered.length}
-            slidesPerView={2}
-            slidesPerGroup={2}
-            spaceBetween={20}
+            slidesPerView={1}
+            spaceBetween={2}
+            breakpoints={{
+              768: {
+                slidesPerView: 2,
+                slidesPerGroup: 2,
+              }
+            }}
             modules={[Navigation]}
             navigation={{
-              nextEl: ".profiles-next-desktop",
-              prevEl: ".profiles-prev-desktop",
+              nextEl: ".profiles-next",
+              prevEl: ".profiles-prev",
               disabledClass: "swiper-button-disabled",
             }}
           >
             {filtered.map(profile => (
-              <SwiperSlide key={profile.id}>
-                <ProfileCard profile={profile} locale={locale} />
+              <SwiperSlide key={profile.id} className="!w-full md:!w-1/2">
+                <div className="p-2">
+                  <ProfileCard profile={profile} locale={locale} />
+                </div>
               </SwiperSlide>
             ))}
           </Swiper>
 
-          <div className="flex justify-end gap-3 mt-4">
-            <button className="profiles-prev-desktop w-8 h-8 border border-blue-700 text-blue-700">&lt;</button>
-            <button className="profiles-next-desktop w-8 h-8 border border-blue-700 text-blue-700">&gt;</button>
-          </div>
+          {/* СТРЕЛКИ */}
+          <button className="profiles-prev absolute top-[200px] -translate-y-1/2 left-2 z-10 w-10 h-10 bg-white/80 text-blue-700 hover:bg-white disabled:opacity-30">
+            &lt;
+          </button>
+          <button className="profiles-next absolute top-[200px] -translate-y-1/2 right-2 z-10 w-10 h-10 bg-white/80 text-blue-700 hover:bg-white disabled:opacity-30">
+            &gt;
+          </button>
         </div>
-
       </div>
 
       <style jsx>{`

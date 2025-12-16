@@ -5,7 +5,6 @@ export async function POST(req: Request) {
   try {
     const { name, phone, email, message, city } = await req.json();
 
-    // ❗ Минимальная обязательная проверка
     if (!name || !phone) {
       return NextResponse.json(
         { error: "Missing required fields" },
@@ -21,7 +20,7 @@ export async function POST(req: Request) {
       },
     });
 
-    const isPromo = Boolean(city); // если есть city — значит это промо-форма
+    const isPromo = Boolean(city); 
 
     await transporter.sendMail({
       from: process.env.SMTP_USER,
@@ -40,7 +39,6 @@ export async function POST(req: Request) {
           <h2>Новое сообщение с сайта</h2>
           <p><strong>Имя:</strong> ${name}</p>
           <p><strong>Телефон:</strong> ${phone}</p>
-          <p><strong>Email:</strong> ${email || "Не указан"}</p>
           <p><strong>Сообщение:</strong> ${message || "Нет сообщения"}</p>
         `,
     });

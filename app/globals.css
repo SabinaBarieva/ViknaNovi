@@ -5,7 +5,7 @@
 .title {
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;          /* SemiBold */
-  font-size: 38px;
+
   line-height: 100%;         /* 1 */
   letter-spacing: 0;
   text-transform: uppercase; /* Uppercase */
@@ -21,6 +21,7 @@
   padding-left: 1rem; /* 16px */
   padding-right: 1rem;
   padding-bottom: 30px;
+    font-size: 26px;
   
 }
 
@@ -38,6 +39,10 @@
   .container {
     padding-left: 1rem; /* 48px */
     padding-right: 1rem;
+
+  }
+    .title {
+      font-size: 38px;
   }
 }
 

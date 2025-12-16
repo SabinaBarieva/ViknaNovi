@@ -18,7 +18,7 @@ export default function AdvantagesSection() {
         {/* GRID */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {items.map((item, i) => (
-            <div key={i}>
+            <div key={`advantage-${i}`}>
               <h3 className="text-[22px] sm:text-[17px] lg:text-[21px] font-semibold mb-2 uppercase text-primary font-mont">
                 {item.title}
               </h3>
@@ -30,6 +30,23 @@ export default function AdvantagesSection() {
         </div>
 
       </div>
+
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "itemListElement": items.map((item, index) => ({
+              "@type": "ListItem",
+              "position": index + 1,
+              "name": item.title,
+              "description": item.text,
+            })),
+          }),
+        }}
+      /> 
     </section>
   );
 }

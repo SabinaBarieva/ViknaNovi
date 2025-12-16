@@ -15,22 +15,13 @@ export default function ReviewsSection() {
 
   const sliderRef = useRef<HTMLDivElement>(null);
 
-  // ✅ определяем только мобилка или десктоп
   useEffect(() => {
-    const updateLayout = () => {
-      const width = window.innerWidth;
+    const mql = window.matchMedia("(min-width: 768px)");
+    setIsDesktop(mql.matches);
 
-      if (width < 768) {
-        setPerPage(2);
-        setIsDesktop(false);
-      } else {
-        setIsDesktop(true);
-      }
-    };
-
-    updateLayout();
-    window.addEventListener("resize", updateLayout);
-    return () => window.removeEventListener("resize", updateLayout);
+    const handleResize = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mql.addEventListener("change", handleResize);
+    return () => mql.removeEventListener("change", handleResize);
   }, []);
 
   const totalPages = isDesktop
@@ -38,11 +29,8 @@ export default function ReviewsSection() {
     : Math.ceil(reviews.length / perPage);
 
   const start = isDesktop ? page : page * perPage;
-  const visible = isDesktop
-    ? reviews
-    : reviews.slice(start, start + perPage);
+  const visible = isDesktop ? reviews : reviews.slice(start, start + perPage);
 
-  // ✅ плавное листание по 1 на десктопе
   useEffect(() => {
     if (isDesktop && sliderRef.current) {
       const cardWidth = 320;
@@ -66,8 +54,6 @@ export default function ReviewsSection() {
 
   return (
     <section className="container pt-[40px]">
-
-      {/* ================= HEADER ================= */}
       <div className="w-full grid md:flex md:justify-between mb-6">
         <h2 className="title shrink-0 md:pr-[30px] lg:pr-[300px]">
           {t("title")}
@@ -78,22 +64,21 @@ export default function ReviewsSection() {
             <span className="font-semibold shrink-0">
               {page + 1}/{totalPages}
             </span>
-
-            {/* ✅ ТВОИ стрелки (десктоп) */}
             <div className="hidden md:flex items-end gap-3 ml-auto">
               <button
                 onClick={prev}
                 disabled={isFirst}
+                aria-label="Назад"
                 className={`text-[20px] transition ${
                   isFirst ? "opacity-30 cursor-not-allowed" : "hover:text-accent"
                 }`}
               >
                 &larr;
               </button>
-
               <button
                 onClick={next}
                 disabled={isLast}
+                aria-label="Вперёд"
                 className={`text-[20px] transition ${
                   isLast ? "opacity-30 cursor-not-allowed" : "hover:text-accent"
                 }`}
@@ -103,7 +88,6 @@ export default function ReviewsSection() {
             </div>
           </div>
 
-          {/* ✅ ТВОЙ progress bar */}
           <div className="w-full mt-2 mb-6">
             <div className="h-[4px] bg-[#5A5F70] rounded overflow-hidden">
               <motion.div
@@ -117,130 +101,56 @@ export default function ReviewsSection() {
         </div>
       </div>
 
-      {/* ================= DESKTOP: ПЛАВНО ПО 1 ================= */}
-      {isDesktop && (
+      {isDesktop ? (
         <div className="w-full overflow-hidden">
           <div
             ref={sliderRef}
             className="flex gap-6 transition-transform duration-500 ease-out"
           >
-            {reviews.map((item: any, i: number) => {
-              const isOpen = expanded === i;
-
-              return (
-                <div
-                  key={i}
-                  className="bg-white p-5 min-w-[300px] max-w-[300px]"
-                >
-                  <AnimatePresence mode="wait">
-                    {!isOpen ? (
-                      <motion.p
-                        className="text-[16px] mb-4 font-opensans font-normal"
-                      >
-                        {item.short}
-                      </motion.p>
-                    ) : (
-                      <motion.p
-                        className="text-[16px] mb-4 font-opensans font-normal"
-                      >
-                        {item.full}
-                      </motion.p>
-                    )}
-                  </AnimatePresence>
-
-                  {/* ✅ ТВОИ кнопки */}
-                  {!isOpen ? (
-                    <button
-                      onClick={() => setExpanded(i)}
-                      className="flex items-center gap-1 text-primary uppercase font-mont font-semibold text-[22px]"
-                    >
-                      {t("expand")}
-                      <span className="text-[28px]">↗</span>
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => setExpanded(null)}
-                      className="flex items-center gap-1 text-primary uppercase font-mont font-semibold text-[22px]"
-                    >
-                      {t("collapse")}
-                      <span className="text-[28px]">↘</span>
-                    </button>
-                  )}
-
-                  <div className="mt-4">
-                    <p className="text-[13px] text-black">{item.name}</p>
-                    <p className="text-[12px] text-gray-500">{item.status}</p>
-                  </div>
-                </div>
-              );
-            })}
+            {reviews.map((item: any, i: number) => (
+              <ReviewCard
+                key={i}
+                item={item}
+                index={i}
+                expanded={expanded}
+                setExpanded={setExpanded}
+              />
+            ))}
           </div>
         </div>
-      )}
-
-      {/* ================= MOBILE: КАК БЫЛО (2 В СТОЛБИК) ================= */}
-      {!isDesktop && (
+      ) : (
         <div className="grid gap-6 mx-auto grid-cols-1">
           {visible.map((item: any, i: number) => {
             const id = start + i;
-            const isOpen = expanded === id;
-
             return (
-              <div key={id} className="bg-white p-5">
-                <AnimatePresence mode="wait">
-                  {!isOpen ? (
-                    <motion.p className="text-[16px] mb-4 font-opensans font-normal">
-                      {item.short}
-                    </motion.p>
-                  ) : (
-                    <motion.p className="text-[16px] mb-4 font-opensans font-normal">
-                      {item.full}
-                    </motion.p>
-                  )}
-                </AnimatePresence>
-
-                {!isOpen ? (
-                  <button
-                    onClick={() => setExpanded(id)}
-                    className="flex items-center gap-1 text-primary uppercase font-mont font-semibold text-[22px]"
-                  >
-                    {t("expand")} <span className="text-[28px]">↘</span>
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => setExpanded(null)}
-                    className="flex items-center gap-1 text-primary uppercase font-mont font-semibold text-[22px]"
-                  >
-                    {t("collapse")} <span className="text-[28px]">↗</span>
-                  </button>
-                )}
-                
-                  <div className="mt-4 text-[16px] text-secondary text-normal text-opensans">
-                    <p className="">{item.name}</p>
-                    <p className="">{item.status}</p>
-                  </div>
-              </div>
+              <ReviewCard
+                key={id}
+                item={item}
+                index={id}
+                expanded={expanded}
+                setExpanded={setExpanded}
+              />
             );
           })}
 
-          {/* ✅ ТВОИ мобильные стрелки снизу */}
           <div className="flex justify-end gap-3 mt-6">
             <button
               onClick={prev}
               disabled={isFirst}
-              className={`w-10 h-10 border border-blue-700 flex items-center justify-center transition
-                ${isFirst ? "opacity-30 cursor-not-allowed" : "text-blue-700"}
-              `}
+              aria-label="Назад"
+              className={`w-10 h-10 border border-blue-700 flex items-center justify-center transition ${
+                isFirst ? "opacity-30 cursor-not-allowed" : "text-blue-700"
+              }`}
             >
               &lt;
             </button>
-
             <button
               onClick={next}
               disabled={isLast}
-              className={`w-10 h-10 border border-blue-700 flex items-center justify-center transition
-                ${isLast ? "opacity-30 cursor-not-allowed" : "text-blue-700"}
-              `}
+              aria-label="Вперёд"
+              className={`w-10 h-10 border border-blue-700 flex items-center justify-center transition ${
+                isLast ? "opacity-30 cursor-not-allowed" : "text-blue-700"
+              }`}
             >
               &gt;
             </button>
@@ -248,5 +158,46 @@ export default function ReviewsSection() {
         </div>
       )}
     </section>
+  );
+}
+
+function ReviewCard({
+  item,
+  index,
+  expanded,
+  setExpanded,
+}: {
+  item: any;
+  index: number;
+  expanded: number | null;
+  setExpanded: (n: number | null) => void;
+}) {
+  const t = useTranslations("reviews");
+  const isOpen = expanded === index;
+
+  return (
+    <div className="bg-white p-5 min-w-[300px] max-w-[300px]">
+      <AnimatePresence mode="wait">
+        <motion.p
+          className="text-[16px] mb-4 font-opensans font-normal"
+          key={isOpen ? "full" : "short"}
+        >
+          {isOpen ? item.full : item.short}
+        </motion.p>
+      </AnimatePresence>
+
+      <button
+        onClick={() => setExpanded(isOpen ? null : index)}
+        className="flex items-center gap-1 text-primary uppercase font-mont font-semibold text-[22px]"
+      >
+        {isOpen ? t("collapse") : t("expand")}
+        <span className="text-[28px]">{isOpen ? "↘" : "↗"}</span>
+      </button>
+
+      <div className="mt-4">
+        <p className="text-[13px] text-black">{item.name}</p>
+        <p className="text-[12px] text-gray-500">{item.status}</p>
+      </div>
+    </div>
   );
 }

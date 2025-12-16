@@ -26,7 +26,7 @@
   },
 
   "services": {
-    "title": "НАШИ УСЛУГИ",
+    "title": "ПРОИЗВОДСТВО",
     "btn": "Оставить заявку",
 
     "items": [
@@ -289,9 +289,9 @@
     },
     "brand": "Бренд",
     "brands": {
-      "ViknaNovi": "ВикнаНови",
+      "ViknaNovi": "ВікнаНові",
       "WDS": "WDS",
-      "Kommerling": "Kömmerling",
+      "Rehau": "Rehau",
       "Profine": "Profine"
     },
     "params": {

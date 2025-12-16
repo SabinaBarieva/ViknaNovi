@@ -5,7 +5,6 @@ import { createNavigation } from 'next-intl/navigation';
 
 const locales = ['uk', 'ru'] as const;
 
-// получаем Link и usePathname из next-intl/navigation
 const { Link, usePathname } = createNavigation({
   locales,
 });
@@ -25,16 +24,17 @@ export default function LanguageSwitcher() {
             locale={loc}
             replace
             scroll={false}
+            lang={loc}
+            aria-label={`Переключиться на ${loc === 'uk' ? 'українську' : 'російську'} мову`}
             className={`transition-colors ${
               active === loc
                 ? 'text-white md:text-secondary'
-                : 'text-[#4B5158] hover:white'
+                : 'text-[#4B5158] hover:text-white'
             }`}
           >
             {loc.toUpperCase()}
           </Link>
 
-          {/* Разделитель | между языками */}
           {index === 0 && <span className="mx-2 text-[#8B8B8B]">|</span>}
         </div>
       ))}

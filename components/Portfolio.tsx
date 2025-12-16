@@ -13,161 +13,105 @@ export default function Portfolio() {
 
   const [page, setPage] = useState(0);
   const [isDesktop, setIsDesktop] = useState(false);
-
   const sliderRef = useRef<HTMLDivElement>(null);
+  const startX = useRef(0);
 
-  // ✅ Мобилка = 2 карточки, десктоп = по 1
-  const perPageMobile = 2;
+  const totalItems = PORTFOLIO_ITEMS.length;
 
-  const totalPages = isDesktop
-    ? PORTFOLIO_ITEMS.length
-    : Math.ceil(PORTFOLIO_ITEMS.length / perPageMobile);
-
-  // ✅ определяем мобилку / десктоп
   useEffect(() => {
-    const updateLayout = () => {
-      setIsDesktop(window.innerWidth >= 768);
-    };
-
-    updateLayout();
-    window.addEventListener("resize", updateLayout);
-    return () => window.removeEventListener("resize", updateLayout);
+    const mql = window.matchMedia("(min-width: 768px)");
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    setIsDesktop(mql.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
   }, []);
 
   useEffect(() => {
-    if (isDesktop && sliderRef.current) {
-      const cardWidth = 520; 
-      sliderRef.current.style.transform = `translateX(-${page * cardWidth}px)`;
-    }
+    if (!sliderRef.current) return;
+
+    const cardWidth = isDesktop ? 420 + 10 : sliderRef.current.offsetWidth;
+    sliderRef.current.style.transform = `translateX(-${page * cardWidth}px)`;
   }, [page, isDesktop]);
 
-  const next = () => {
-    setPage((p) => (p + 1 < totalPages ? p + 1 : p));
+  const next = () => setPage((p) => (p + 1 < totalItems ? p + 1 : p));
+  const prev = () => setPage((p) => (p - 1 >= 0 ? p - 1 : p));
+
+  const progress = ((page + 1) / totalItems) * 100;
+
+  // свайп
+  const onTouchStart = (e: React.TouchEvent) => {
+    startX.current = e.touches[0].clientX;
   };
 
-  const prev = () => {
-    setPage((p) => (p - 1 >= 0 ? p - 1 : p));
+  const onTouchEnd = (e: React.TouchEvent) => {
+    const deltaX = e.changedTouches[0].clientX - startX.current;
+    if (deltaX > 50) prev();
+    else if (deltaX < -50) next();
   };
-
-  const isFirst = page === 0;
-  const isLast = page === totalPages - 1;
-
-  const progress = ((page + 1) / totalPages) * 100;
 
   return (
     <section className="container pt-[40px]">
       <div className="w-full mx-auto">
 
-         <div className="w-full grid md:flex md:justify-between mb-6">
-          <div className="grid shrink-0 md:pr-[60px] lg:pr-[300px]">
-        <h2 className="title ]">
-          {t("title")}
-        </h2>
-        <p className="font-opensans shrink-0 ">
-          {t("subtitle")}
-        </p>
-        </div>
-
-        <div className="grid w-full">
-          <div className="flex items-center gap-4 text-secondary text-[25px] w-full">
-            <span className="font-semibold shrink-0">
-              {page + 1}/{totalPages}
-            </span>
-
-            {/*  стрелки (десктоп) */}
-            <div className="hidden md:flex items-end gap-3 ml-auto">
-              <button
-                onClick={prev}
-                disabled={isFirst}
-                className={`text-[20px] transition ${
-                  isFirst ? "opacity-30 cursor-not-allowed" : "hover:text-accent"
-                }`}
-              >
-                &larr;
-              </button>
-
-              <button
-                onClick={next}
-                disabled={isLast}
-                className={`text-[20px] transition ${
-                  isLast ? "opacity-30 cursor-not-allowed" : "hover:text-accent"
-                }`}
-              >
-                &rarr;
-              </button>
-            </div>
+        {/* HEADER */}
+        <div className="w-full grid md:flex md:justify-between mb-6">
+          <div>
+            <h2 className="title">{t("title")}</h2>
+            <p className="font-opensans">{t("subtitle")}</p>
           </div>
 
+          <div className="grid">
+            <div className="flex items-center gap-4  text-secondary text-[25px]">
+              <span className="font-semibold">
+                {page + 1}/{totalItems}
+              </span>
 
-          <div className="w-full mt-2 mb-6">
-            <div className="h-[4px] bg-[#5A5F70] rounded overflow-hidden">
-              <motion.div
-                className="h-full bg-bluemorelight"
-                initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.4 }}
-              />
+              <div className="hidden md:flex gap-3 ml-auto">
+                <button onClick={prev} disabled={page === 0} className="text-[20px] disabled:opacity-30">&larr;</button>
+                <button onClick={next} disabled={page === totalItems - 1} className="text-[20px] disabled:opacity-30">&rarr;</button>
+              </div>
             </div>
-        </div>
-        </div>
-        </div>
 
-        {/* ================= DESKTOP SLIDER ================= */}
-        {isDesktop && (
-          <div className="w-full overflow-hidden">
-            <div
-              ref={sliderRef}
-              className="flex gap-[10px] transition-transform duration-500 ease-out"
-            >
-              {PORTFOLIO_ITEMS.map((item) => (
-                <div
-                  key={item.id}
-                  className="min-w-[510px] max-w-[510px] h-[830px] overflow-hidden"
-                >
-                  <PortfolioCard item={item} locale={locale} />
-                </div>
-              ))}
+            <div className="w-full mt-2">
+              <div className="h-[4px] bg-[#5A5F70] rounded overflow-hidden">
+                <motion.div
+                  className="h-full bg-bluemorelight"
+                  animate={{ width: `${progress}%` }}
+                  transition={{ duration: 0.3 }}
+                />
+              </div>
             </div>
           </div>
-        )}
+        </div>
 
-        {/* ================= MOBILE: 2 КАРТОЧКИ ================= */}
-        {!isDesktop && (
-          <div className="grid gap-6 grid-cols-1">
-
-            {PORTFOLIO_ITEMS
-              .slice(page * perPageMobile, page * perPageMobile + perPageMobile)
-              .map((item) => (
-                <div key={item.id} className="h-[400px]">
-                  <PortfolioCard item={item} locale={locale} />
-                </div>
-              ))}
-
-            {/* МОБИЛЬНЫЕ СТРЕЛКИ */}
-            <div className="flex justify-end gap-3 mt-6">
-              <button
-                onClick={prev}
-                disabled={isFirst}
-                className={`w-10 h-10 border border-blue-700 flex items-center justify-center transition
-                  ${isFirst ? "opacity-30 cursor-not-allowed" : "text-blue-700"}
-                `}
-              >
+        {/* SLIDER */}
+        <div className="relative overflow-hidden">
+          {!isDesktop && (
+            <>
+              <button onClick={prev} disabled={page === 0}
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-10   w-10 h-10 bg-white/80 text-blue-700 hover:bg-white disabled:opacity-30">
                 &lt;
               </button>
-
-              <button
-                onClick={next}
-                disabled={isLast}
-                className={`w-10 h-10 border border-blue-700 flex items-center justify-center transition
-                  ${isLast ? "opacity-30 cursor-not-allowed" : "text-blue-700"}
-                `}
-              >
+              <button onClick={next} disabled={page === totalItems - 1}
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-10  w-10 h-10 bg-white/80 text-blue-700 hover:bg-white disabled:opacity-30">
                 &gt;
               </button>
-            </div>
-          </div>
-        )}
+            </>
+          )}
 
+          <div
+            ref={sliderRef}
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+            className="flex gap-[10px] transition-transform duration-500 ease-out"
+          >
+            {PORTFOLIO_ITEMS.map((item, index) => (
+              <div key={item.id} className="min-w-full md:min-w-[480px] md:max-w-[480px] h-[430px]">
+                <PortfolioCard item={item} locale={locale} priority={index === 0} />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -176,29 +120,22 @@ export default function Portfolio() {
 function PortfolioCard({
   item,
   locale,
+  priority = false,
 }: {
   item: any;
   locale: "uk" | "ru";
+  priority?: boolean;
 }) {
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full">
       <Image
         src={item.image}
         alt={item.title[locale]}
         width={610}
         height={330}
-        className="h-full w-full object-fill"
+        className="w-full h-full object-cover"
+        priority={priority}
       />
-
-      {/* <div className="p-5">
-        <h3 className="text-blue-700 text-lg font-semibold mb-2">
-          {item.title[locale]}
-        </h3>
-
-        <p className="text-sm text-gray-700 leading-5">
-          {item.description[locale]}
-        </p>
-      </div> */}
     </div>
   );
 }

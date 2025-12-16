@@ -9,7 +9,6 @@ import SuccessModal from "./SuccessModal";
 type FormFields = {
   name: string;
   phone: string;
-  email: string;
   message: string;
   agree: boolean;
 };
@@ -17,7 +16,6 @@ type FormFields = {
 type FormErrors = {
   name?: string;
   phone?: string;
-  email?: string;
   message?: string;
   agree?: string;
 };
@@ -35,7 +33,6 @@ export default function FeedbackModal({ open, onClose }: Props) {
   const [form, setForm] = useState<FormFields>({
     name: "",
     phone: "",
-    email: "",
     message: "",
     agree: false
   });
@@ -56,9 +53,6 @@ export default function FeedbackModal({ open, onClose }: Props) {
 
     const digits = form.phone.replace(/\D/g, "");
     if (digits.length < 12) newErrors.phone = t("errors.phone");
-
-    if (form.email && !/^\S+@\S+\.\S+$/.test(form.email))
-      newErrors.email = t("errors.email");
 
     // if (!form.message.trim()) newErrors.message = t("errors.required");
 
@@ -86,7 +80,7 @@ export default function FeedbackModal({ open, onClose }: Props) {
         setSuccess(true);
 
         // Clear form after success
-        setForm({ name: "", phone: "", email: "", message: "", agree: false });
+        setForm({ name: "", phone: "",  message: "", agree: false });
         setErrors({});
       }
     } catch (err) {
@@ -176,17 +170,7 @@ export default function FeedbackModal({ open, onClose }: Props) {
             {errors.phone && <p className="text-red-300 text-sm">{errors.phone}</p>}
           </div>
 
-          {/* EMAIL */}
-          <div>
-            <input
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder={t("email")}
-              className="w-full bg-transparent border border-white/50 rounded px-3 py-2 placeholder-white/70"
-            />
-            {errors.email && <p className="text-red-300 text-sm">{errors.email}</p>}
-          </div>
+
 
           {/* MESSAGE */}
           <div>

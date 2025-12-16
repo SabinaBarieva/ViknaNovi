@@ -10,7 +10,6 @@ export default async function SaleSliderServer({
     *[_type == "heroBlock"] | order(_createdAt asc)
   `);
 
-  // ✅ Собираем ВСЕ slides из всех блоков в один массив
   const slides = blocks.flatMap((block: any) => block.slides || []);
 
   return <SaleSlider data={slides} lang={lang} />;

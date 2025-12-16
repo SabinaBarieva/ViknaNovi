@@ -26,6 +26,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   return (
     <>
+    <main className=' pt-[80px]'>
       <BannerSlider />
       <AboutSection/>
       <PromoModal/>
@@ -44,6 +45,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <StepsSection/>
       <ReviewsSection/>
       <ContactForm/>
+      </main>
     </>
   );
 }

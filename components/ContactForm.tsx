@@ -11,7 +11,6 @@ export default function FeedbackForm() {
   type FormFields = {
     name: string;
     phone: string;
-    email: string;
     message: string;
     agree: boolean;
   };
@@ -19,14 +18,12 @@ export default function FeedbackForm() {
   type FieldStates = {
     name: boolean;
     phone: boolean;
-    email: boolean;
     message: boolean;
   };
 
   type FormErrors = {
     name?: string;
     phone?: string;
-    email?: string;
     message?: string;
     agree?: string;
   };
@@ -34,7 +31,6 @@ export default function FeedbackForm() {
   const [form, setForm] = useState<FormFields>({
     name: "",
     phone: "",
-    email: "",
     message: "",
     agree: false,
   });
@@ -43,14 +39,12 @@ export default function FeedbackForm() {
   const [focused, setFocused] = useState<FieldStates>({
     name: false,
     phone: false,
-    email: false,
     message: false,
   });
 
   const [isSuccess, setIsSuccess] = useState<Omit<FieldStates, "message">>({
     name: false,
     phone: false,
-    email: false,
   });
 
   const [isDisabled, setIsDisabled] = useState(false);
@@ -65,9 +59,6 @@ export default function FeedbackForm() {
     const digits = form.phone.replace(/\D/g, "");
     if (digits.length < 12) newErrors.phone = t("errors.phone");
 
-    if (form.email && !/^\S+@\S+\.\S+$/.test(form.email))
-      newErrors.email = t("errors.email");
-
     if (!form.agree) newErrors.agree = t("errors.agree");
 
     setErrors(newErrors);
@@ -75,7 +66,6 @@ export default function FeedbackForm() {
     setIsSuccess({
       name: !newErrors.name,
       phone: !newErrors.phone,
-      email: !newErrors.email && form.email.trim() !== "",
     });
 
     return Object.keys(newErrors).length === 0;
@@ -99,14 +89,13 @@ export default function FeedbackForm() {
         setForm({
           name: "",
           phone: "",
-          email: "",
           message: "",
           agree: false,
         });
 
         setErrors({});
-        setIsSuccess({ name: false, phone: false, email: false });
-        setFocused({ name: false, phone: false, email: false, message: false });
+        setIsSuccess({ name: false, phone: false });
+        setFocused({ name: false, phone: false, message: false });
       }
     } catch {
       alert(t("errors.server"));
@@ -128,25 +117,18 @@ export default function FeedbackForm() {
   };
 
   const getInputClass = (field: keyof FormFields) => {
-    const isFieldSuccess =
-      field !== "email" && field !== "agree"
-        ? isSuccess[field as keyof typeof isSuccess]
-        : false;
-
-    const isFocused =
-      field in focused ? focused[field as keyof typeof focused] : false;
+    const isFocused = field in focused ? focused[field as keyof typeof focused] : false;
 
     return `outline-none h-[48px] px-4 w-full text-[16px] font-opensans transition-all duration-200
       ${isDisabled ? "bg-primary text-white cursor-not-allowed" :
       errors[field] ? "bg-[#FF393280] bg-opacity-50" :
-      isFieldSuccess ? "bg-[#60B52780] bg-opacity-50" :
       isFocused ? "bg-[#0055FF80] bg-opacity-50" :
       form[field] ? "bg-[#0B0B7A] text-white border border-[#0B0B7A]" :
       "bg-[#EDEEEF] border border-secondary"}`;
   };
 
   return (
-    <section className="container w-full py-10 md:py-20">
+    <section className="container w-full py-10 md:py-20" id="contact">
       <div className="mx-auto max-w-[1240px] px-4 grid grid-cols-1 md:grid-cols-2 gap-12">
         <div className="flex flex-col">
           <h2 className="title">{t("title")}</h2>
@@ -156,9 +138,9 @@ export default function FeedbackForm() {
             <p>Email: vn.callcenter@viknanovi.ua</p>
           </div>
           <div className="flex gap-4 mt-6">
-            <a href="#"><img src="/contactform/facebook.svg" className="w-6" /></a>
-            <a href="#"><img src="/contactform/insta.svg" className="w-6" /></a>
-            <a href="#"><img src="/contactform/youtube.svg" className="pt-1 w-6" /></a>
+            <a href="#"><img src="/tg.webp" className="w-6" alt="Telegram" /></a>
+            <a href="https://www.instagram.com/viknanovi_original/" rel="noopener noreferrer" target="_blank"><img src="/contactform/insta.svg" className="w-6" alt="Instagram" /></a>
+            <a href="#"><img src="/viber.png" className="w-6" alt="Viber" /></a>
           </div>
         </div>
 
@@ -166,6 +148,7 @@ export default function FeedbackForm() {
           <div>
             <input
               name="name"
+              type="text"
               value={form.name}
               onChange={handleChange}
               onFocus={() => setFocused({ ...focused, name: true })}
@@ -173,6 +156,7 @@ export default function FeedbackForm() {
               placeholder={t("inputs.name")}
               disabled={isDisabled}
               className={getInputClass("name")}
+              required
             />
             {errors.name && <p className="text-[#FF393280] text-[16px] mt-1">{errors.name}</p>}
             {isSuccess.name && !errors.name && (
@@ -192,21 +176,9 @@ export default function FeedbackForm() {
               onBlur={() => setFocused({ ...focused, phone: false })}
               placeholder={t("inputs.tel")}
               className={getInputClass("phone")}
+              required
             />
             {errors.phone && <p className="text-[#FF393280] text-sm">{errors.phone}</p>}
-          </div>
-
-          <div>
-            <input
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              onFocus={() => setFocused({ ...focused, email: true })}
-              onBlur={() => setFocused({ ...focused, email: false })}
-              placeholder="example@gmail.com"
-              className={getInputClass("email")}
-            />
-            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
           </div>
 
           <textarea
@@ -226,6 +198,7 @@ export default function FeedbackForm() {
               onChange={handleChange}
               className="mt-1"
               name="agree"
+              required
             />
             <span>{t("agree")}</span>
           </label>
@@ -240,13 +213,35 @@ export default function FeedbackForm() {
         </form>
       </div>
 
-{success && (
-  <SuccessModal
-    title={t("successTitle")}
-    message={t("successMsg")}
-    onClose={() => setSuccess(false)}
-  />
-)}
+      {success && (
+        <SuccessModal
+          title={t("successTitle")}
+          message={t("successMsg")}
+          onClose={() => setSuccess(false)}
+        />
+      )}
+
+      {/* SEO JSON-LD для одностраничного сайта */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ContactPage",
+            "name": "Контакти — ViknaNovi",
+            "description": "Форма зворотного зв'язку для консультації з продажу вікон по всій Україні.",
+            "mainEntity": {
+              "@type": "ContactPoint",
+              "telephone": "+38 (067) 400-02-02",
+              "email": "vn.callcenter@viknanovi.ua",
+              "contactType": "customer support",
+              "areaServed": "UA",
+              "availableLanguage": ["Ukrainian", "Russian"],
+              "url": "https://viknanovi.ua/"
+            }
+          })
+        }}
+      />
     </section>
   );
 }

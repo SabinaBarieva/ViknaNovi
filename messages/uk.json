@@ -28,7 +28,7 @@
     "stat3": "Готові нас рекомендувати"
   },
   "services": {
-    "title": "НАШІ ПОСЛУГИ",
+    "title": "ВИРОБНИЦТВО",
     "btn": "Залишити заявку",
 
     "items": [
@@ -319,7 +319,7 @@
     "brands": {
       "ViknaNovi": "ВікнаНові",
       "WDS": "WDS",
-      "Kommerling": "Kömmerling",
+      "Rehau": "Rehau",
       "Profine": "Profine"
     },
     "params": {
