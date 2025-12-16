@@ -53,7 +53,7 @@ export default function ReviewsSection() {
         </h2>
 
         <div className="grid w-full">
-          <div className="flex items-center gap-4 text-secondary text-[25px] w-full">
+          <div className="flex items-center gap-4 font-opensans text-secondary text-[25px] w-full">
             <span className="font-semibold shrink-0">
               {page + 1}/{totalPages}
             </span>
@@ -162,15 +162,15 @@ function ReviewCard({
 
       <button
         onClick={() => setExpanded(isOpen ? null : index)}
-        className="flex items-center gap-1 text-primary uppercase font-mont font-semibold text-[22px]"
+        className="flex items-center gap-1 text-primary uppercase font-mont font-semibold text-[16px]"
       >
         {isOpen ? t("collapse") : t("expand")}
-        <span className="text-[28px]">{isOpen ? "↘" : "↗"}</span>
+        <span className="text-[16px]">{isOpen ? "↘" : "↗"}</span>
       </button>
 
       <div className="mt-4">
-        <p className="text-[13px] text-black">{item.name}</p>
-        <p className="text-[12px] text-gray-500">{item.status}</p>
+        <p className="text-[13px] font-opensans text-black">{item.name}</p>
+        <p className="text-[12px] font-opensans text-gray-500">{item.status}</p>
       </div>
     </div>
   );

@@ -38,8 +38,8 @@ export default function Header() {
               )}
             </button>
 
-            <div className="block lg:hidden w-[140px] h-[31px]">
-              <Image src="/logo.svg" alt="Logo" width={147} height={31} className="w-full h-auto" />
+            <div className="block lg:hidden w-[127px] h-[31px]">
+              <Image src="/logo.svg" alt="Logo" width={127} height={31} className="w-full h-auto" />
             </div>
           </div>
 
@@ -52,7 +52,7 @@ export default function Header() {
         </div>
 
         {/* Десктоп логотип */}
-        <div className="hidden lg:block xl:hidden w-[127px] h-[31px]">
+        <div className="hidden lg:block xl:hidden w-[17px] h-[31px]">
           <Image src="/logo.svg" alt="Logo" width={127} height={31} className="w-full h-auto" />
         </div>
         <div className="hidden xl:block w-[218px] h-[51.5px]">
@@ -115,7 +115,7 @@ export default function Header() {
           <div className="mt-auto mb-10 text-center text-sm opacity-90">
             <a
               href="tel:+380674000202"
-              className="inline-block text-primary font-mont text-[14px] px-4 py-2"
+              className="inline-block text-primary font-mont text-[14px] px-2 py-2"
             >
               +38 (067) 400-02-02
             </a>

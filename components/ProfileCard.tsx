@@ -64,10 +64,10 @@ export default function ProfileCard({ profile, locale }: Props) {
           <div className="flex justify-end mt-4">
             <button
               onClick={() => setOpen(true)}
-              className="flex items-center gap-1 text-primary uppercase font-mont font-semibold text-[22px] hover:underline"
+              className="flex items-center gap-1 text-primary uppercase font-mont font-semibold text-[16px]"
             >
               {locale === "uk" ? "Розгорнути" : "Развернуть"}{" "}
-              <span className="text-[28px]">↘</span>
+              <span className="text-[16px]">↘</span>
             </button>
           </div>
         </div>
@@ -96,10 +96,10 @@ export default function ProfileCard({ profile, locale }: Props) {
           <div className="flex justify-end mt-3">
             <button
               onClick={() => setOpen(false)}
-              className="flex items-center gap-1 text-primary font-mont font-semibold text-[22px] uppercase hover:underline"
+              className="flex items-center gap-1 text-primary font-mont font-semibold text-[16px] uppercase hover:underline"
             >
               {locale === "uk" ? "Згорнути" : "Свернуть"}{" "}
-              <span className="text-[28px]">↗</span>
+              <span className="text-[16px]">↗</span>
             </button>
           </div>
         </div>
