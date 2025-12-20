@@ -1,115 +1,107 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import Image from "next/image";
-import { useTranslations, useLocale } from "next-intl";
-import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 
-import { PORTFOLIO_ITEMS } from "@/data/portfolio";
+const COLORS = [
+  { key: "alpin_sheffild_oak", name: { uk: "Альпійський шеффілд", ru: "Альпийский шеффилд" }, texture: "/windowsection/texture/dubshefild.png", frame: "/windowsection/frame/alpin_sheffild_oak.png" },
+  { key: "anthracit_grey_sand", name: { uk: "Антрацит піщаний", ru: "Антрацит песчаный" }, texture: "/windowsection/texture/antracit.png", frame: "/windowsection/frame/anthracit_grey_sand.png" },
+  { key: "antrasit_dark_wood", name: { uk: "Антрацит дерево", ru: "Антрацит дерево" }, texture: "/windowsection/texture/antracittemniy.png", frame: "/windowsection/frame/antratsit_dark_wood.png" },
+  { key: "birch_tree", name: { uk: "Береза", ru: "Берёза" }, texture: "/windowsection/texture/bereza.png", frame: "/windowsection/frame/birch_tree.png" },
+  { key: "cloudy_grey", name: { uk: "Хмарно-сірий", ru: "Облачно-серый" }, texture: "/windowsection/texture/greysky.png", frame: "/windowsection/frame/cloudy_grey.png" },
+  { key: "dark_cherry", name: { uk: "Темна вишня", ru: "Тёмная вишня" }, texture: "/windowsection/texture/temnavishya.png", frame: "/windowsection/frame/dark_cherry.png" },
+  { key: "dark_oak", name: { uk: "Темний дуб", ru: "Тёмный дуб" }, texture: "/windowsection/texture/temniydub.png", frame: "/windowsection/frame/dark_oak.png" },
+  { key: "golden_oak", name: { uk: "Золотий дуб", ru: "Золотой дуб" }, texture: "/windowsection/texture/golddub.png", frame: "/windowsection/frame/golden_oak.png" },
+  { key: "light_oak", name: { uk: "Світлий дуб", ru: "Светлый дуб" }, texture: "/windowsection/texture/dubsvitliy.png", frame: "/windowsection/frame/light_oak.png" },
+  { key: "mahogany", name: { uk: "Махагон", ru: "Махагон" }, texture: "/windowsection/texture/mahagoni.png", frame: "/windowsection/frame/mahogany.png" },
+  { key: "montana_oak", name: { uk: "Дуб Монтана", ru: "Дуб Монтана" }, texture: "/windowsection/texture/dubmontana.png", frame: "/windowsection/frame/montana_oak.png" },
+  { key: "natural_oak", name: { uk: "Натуральний дуб", ru: "Натуральный дуб" }, texture: "/windowsection/texture/naturedub.png", frame: "/windowsection/frame/natural_oak.png" },
+  { key: "oak_terner", name: { uk: "Дуб Тернер", ru: "Дуб Тернер" }, texture: "/windowsection/texture/dubterner.png", frame: "/windowsection/frame/oak_terner.png" },
+  { key: "pearl_white", name: { uk: "Перловий білий", ru: "Перламутровый белый" }, texture: "/windowsection/texture/whiteperl.png", frame: "/windowsection/frame/pearl_white.png" },
+  { key: "pine_tree", name: { uk: "Сосна", ru: "Сосна" }, texture: "/windowsection/texture/sosna.png", frame: "/windowsection/frame/pine_tree.png" },
+  { key: "sea_blue", name: { uk: "Морський синій", ru: "Морской синий" }, texture: "/windowsection/texture/bluesea.png", frame: "/windowsection/frame/sea_blue.png" },
+  { key: "sheffild_oak", name: { uk: "Шеффілд дуб", ru: "Шеффилд дуб" }, texture: "/windowsection/texture/dubshefild.png", frame: "/windowsection/frame/sheffield_oak.png" },
+  { key: "sheffild_oak_grey", name: { uk: "Шеффілд сірий", ru: "Шеффилд серый" }, texture: "/windowsection/texture/greyslanc.png", frame: "/windowsection/frame/sheffild_oak_grey.png" },
+  { key: "slate_grey", name: { uk: "Графітовий сірий", ru: "Графитовый серый" }, texture: "/windowsection/texture/greyslanc.png", frame: "/windowsection/frame/slate_grey.png" },
+  { key: "soolblack", name: { uk: "Глибокий чорний", ru: "Глубокий чёрный" }, texture: "/windowsection/texture/blackcold.png", frame: "/windowsection/frame/soolblack.png" },
+  { key: "walnut", name: { uk: "Горіх", ru: "Орех" }, texture: "/windowsection/texture/nut.png", frame: "/windowsection/frame/walnut.png" }
+];
 
-export default function Portfolio() {
-  const t = useTranslations("portfolio");
-  const locale = useLocale() as "uk" | "ru";
-
-  const [page, setPage] = useState(0);
-  const [isDesktop, setIsDesktop] = useState(false);
-  const sliderRef = useRef<HTMLDivElement>(null);
-  const startX = useRef(0);
-
-  const totalItems = PORTFOLIO_ITEMS.length;
-
-  useEffect(() => {
-    const mql = window.matchMedia("(min-width: 768px)");
-    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
-    setIsDesktop(mql.matches);
-    mql.addEventListener("change", handler);
-    return () => mql.removeEventListener("change", handler);
-  }, []);
-
-  useEffect(() => {
-    if (!sliderRef.current) return;
-
-    const cardWidth = isDesktop ? 420 + 10 : sliderRef.current.offsetWidth;
-    sliderRef.current.style.transform = `translateX(-${page * cardWidth}px)`;
-  }, [page, isDesktop]);
-
-  const next = () => setPage((p) => (p + 1 < totalItems ? p + 1 : p));
-  const prev = () => setPage((p) => (p - 1 >= 0 ? p - 1 : p));
-
-  const progress = ((page + 1) / totalItems) * 100;
-
-  // свайп
-  const onTouchStart = (e: React.TouchEvent) => {
-    startX.current = e.touches[0].clientX;
-  };
-
-  const onTouchEnd = (e: React.TouchEvent) => {
-    const deltaX = e.changedTouches[0].clientX - startX.current;
-    if (deltaX > 50) prev();
-    else if (deltaX < -50) next();
-  };
+export default function WindowDesigner() {
+  const t = useTranslations("windowDesigner");
+  const [selected, setSelected] = useState(COLORS[0]);
 
   return (
     <section className="container pt-[40px]">
-      <div className="w-full mx-auto">
+      <h2 className="title">{t("title")}</h2>
 
-        {/* HEADER */}
-        <div className="w-full grid md:flex md:justify-between mb-6">
+      <div className="grid md:flex gap-10 relative overflow-hidden md:justify-between bg-cover p-10 lg:p-20">
+        <Image
+          src="/windowsection.png"
+          fill
+          alt="Дизайн пластикового вікна"
+
+          className="absolute inset-0 w-full h-full object-cover"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/70"></div>
+
+        {/* Блок фільтрів */}
+        <aside className="w-full h-max md:w-[320px] z-10 bg-white p-5 lg:p-10 flex flex-col gap-6">
+          <h3 className="font-mont text-primary font-semibold text-[24px] uppercase">{t("filters")}</h3>
+
           <div>
-            <h2 className="title">{t("title")}</h2>
-            <p className="font-opensans">{t("subtitle")}</p>
-          </div>
-
-          <div className="grid">
-            <div className="flex items-center gap-4  text-secondary text-[25px]">
-              <span className="font-semibold">
-                {page + 1}/{totalItems}
-              </span>
-
-              <div className="hidden md:flex gap-3 ml-auto">
-                <button onClick={prev} disabled={page === 0} className="text-[20px] disabled:opacity-30">&larr;</button>
-                <button onClick={next} disabled={page === totalItems - 1} className="text-[20px] disabled:opacity-30">&rarr;</button>
-              </div>
+            <h3 className="uppercase mb-4 font-mont text-primary font-semibold text-[18px]">{t("frameColors")}</h3>
+            <div className="grid grid-cols-4 gap-3">
+              {COLORS.map((c) => (
+                <button
+                  key={c.key}
+                  onClick={() => setSelected(c)}
+                  className={`relative w-10 h-10 rounded-full border transition ${
+                    selected.key === c.key
+                      ? "border-blue-600 scale-110"
+                      : "border-gray-300"
+                  }`}
+                >
+                  <Image
+                    src={c.texture}
+                    alt={c.name.uk}
+                    width={40}
+                    height={40}
+                    className="rounded-full object-cover"
+                    loading="lazy"
+                  />
+                  {selected.key === c.key && (
+                    <span className="absolute inset-0 flex items-center justify-center">
+                      <svg
+                        className="w-5 h-5 text-white"
+                        fill="none"
+                        stroke="white"
+                        strokeWidth="3"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M5 13l4 4L19 7" />
+                      </svg>
+                    </span>
+                  )}
+                </button>
+              ))}
             </div>
-
-            <div className="w-full mt-2">
-              <div className="h-[4px] bg-[#5A5F70] rounded overflow-hidden">
-                <motion.div
-                  className="h-full bg-bluemorelight"
-                  animate={{ width: `${progress}%` }}
-                  transition={{ duration: 0.3 }}
-                />
-              </div>
-            </div>
           </div>
-        </div>
+        </aside>
 
-        {/* SLIDER */}
-        <div className="relative overflow-hidden">
-          {!isDesktop && (
-            <>
-              <button onClick={prev} disabled={page === 0}
-                className="absolute left-2 top-1/2 -translate-y-1/2 z-10   w-10 h-10 bg-white/80 text-blue-700 hover:bg-white disabled:opacity-30">
-                &lt;
-              </button>
-              <button onClick={next} disabled={page === totalItems - 1}
-                className="absolute right-2 top-1/2 -translate-y-1/2 z-10  w-10 h-10 bg-white/80 text-blue-700 hover:bg-white disabled:opacity-30">
-                &gt;
-              </button>
-            </>
-          )}
-
-          <div
-            ref={sliderRef}
-            onTouchStart={onTouchStart}
-            onTouchEnd={onTouchEnd}
-            className="flex gap-[10px] transition-transform duration-500 ease-out"
-          >
-            {PORTFOLIO_ITEMS.map((item, index) => (
-              <div key={item.id} className="min-w-full md:min-w-[480px] md:max-w-[480px] h-[430px]">
-                <PortfolioCard item={item} locale={locale} priority={index === 0} />
-              </div>
-            ))}
+        <div className="flex flex-col items-center">
+          <Image
+            src={selected.frame}
+            alt={selected.name.uk}
+            width={520}
+            height={520}
+            loading="lazy"
+            className="object-contain drop-shadow-xl"
+          />
+          <div className="w-full z-10 mt-4 px-6 py-3 bg-[#FFFFFF] font-mont text-primary font-semibold text-[24px] text-center uppercase">
+            {selected.name.uk}
           </div>
         </div>
       </div>
@@ -117,25 +109,3 @@ export default function Portfolio() {
   );
 }
 
-function PortfolioCard({
-  item,
-  locale,
-  priority = false,
-}: {
-  item: any;
-  locale: "uk" | "ru";
-  priority?: boolean;
-}) {
-  return (
-    <div className="h-full">
-      <Image
-        src={item.image}
-        alt={item.title[locale]}
-        width={610}
-        height={330}
-        className="w-full h-full object-cover"
-        priority={priority}
-      />
-    </div>
-  );
-}

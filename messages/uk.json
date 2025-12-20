@@ -268,7 +268,9 @@
     "title": "Дизайн вікон",
     "filters": "Фільтри",
     "chooseStyle": "Oберіть стиль ваших майбутніх вікон",
-    "frameColors": "Доступні кольори"
+    "frameColors": "Стандартні кольори",
+    "unusualColors": "Нестандартні кольори"
+
   },
   
   "feedbackForm": {
