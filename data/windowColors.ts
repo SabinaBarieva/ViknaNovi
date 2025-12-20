@@ -125,7 +125,7 @@ export const WINDOW_COLORS: WindowColor[] = [
   {
     key: "sheffild_oak",
     name: { uk: "Шеффілд дуб", ru: "Шеффилд дуб" },
-    texture: "/windowsection/texture/dubshefild.png",
+    texture: "/windowsection/texture/dubshevild.png",
     frame: "/windowsection/frame/sheffield_oak.png",
     type: "nonstandard",
   },
