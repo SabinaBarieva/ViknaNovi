@@ -38,36 +38,21 @@ export default function AboutSection() {
             </div>
           </div>
 
-          {/* Видео с lazy loading и адаптивной обёрткой */}
           <div className="w-full relative pt-[56.25%]">
-            <iframe
-              className="absolute top-0 left-0 w-full h-full"
-              loading="lazy"
-              src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
-              title="ViknaNovi video"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-            ></iframe>
-          </div>
+  <iframe
+    className="absolute top-0 left-0 w-full h-full"
+    loading="lazy"
+    src="https://www.youtube.com/embed/MtywbdmLF1w"
+    title="Виробництво металопластикових вікон ViknaNovi"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowFullScreen
+  />
+</div>
+
         </div>
       </div>
 
-      {/* SEO JSON-LD */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "AboutPage",
-            "name": "Про компанію ViknaNovi",
-            "description": "Ми виготовляємо вікна в Україні понад 15 років. Понад 500 000 задоволених клієнтів.",
-            "publisher": {
-              "@type": "Organization",
-              "name": "ViknaNovi"
-            }
-          }),
-        }}
-      />
+
     </section>
   );
 }

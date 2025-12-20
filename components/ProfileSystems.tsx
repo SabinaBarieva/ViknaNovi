@@ -46,7 +46,8 @@ export default function ProfileSystems() {
 
       <div className="flex flex-col md:flex-row gap-5">
         {/* ФИЛЬТРЫ */}
-        <aside className="w-full h-max md:w-[260px] bg-white p-5 rounded shadow pr-[100px] z-10">
+        <aside className="w-full h-max md:w-[260px] bg-white p-5 rounded shadow pr-[100px] z-10"
+        aria-label={t("filters")}>
           <h3 className="text-[24px] font-mont uppercase font-semibold text-primary mb-8">
             {t("filters")}
           </h3>

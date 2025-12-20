@@ -32,7 +32,8 @@ export default function LanguageSwitcher() {
                 : 'text-[#4B5158] hover:text-white'
             }`}
           >
-            {loc.toUpperCase()}
+            {loc === 'uk' ? 'UA' : 'RU'}
+
           </Link>
 
           {index === 0 && <span className="mx-2 text-[#8B8B8B]">|</span>}

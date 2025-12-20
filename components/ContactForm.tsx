@@ -221,27 +221,7 @@ export default function FeedbackForm() {
         />
       )}
 
-      {/* SEO JSON-LD для одностраничного сайта */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "ContactPage",
-            "name": "Контакти — ViknaNovi",
-            "description": "Форма зворотного зв'язку для консультації з продажу вікон по всій Україні.",
-            "mainEntity": {
-              "@type": "ContactPoint",
-              "telephone": "+38 (067) 400-02-02",
-              "email": "vn.callcenter@viknanovi.ua",
-              "contactType": "customer support",
-              "areaServed": "UA",
-              "availableLanguage": ["Ukrainian", "Russian"],
-              "url": "https://viknanovi.ua/"
-            }
-          })
-        }}
-      />
+
     </section>
   );
 }

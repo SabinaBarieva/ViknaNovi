@@ -43,7 +43,7 @@ export default function BannerSlider() {
                   fill
                   alt="Banner slide"
                   className="object-cover"
-                  loading="lazy"
+            
                 />
 
                 {/* Затемнение */}
@@ -52,9 +52,9 @@ export default function BannerSlider() {
                 {/* Контент */}
                 <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-4 sm:px-16 md:px-24 xl:px-36">
                   <div className="max-w-[740px]">
-                    <h1 className="font-mont font-semibold text-[28px] md:text-[42px] text-white uppercase leading-[100%]">
+                    <h2 className="font-mont font-semibold text-[28px] md:text-[42px] text-white uppercase leading-[100%]">
                       {t('title')}
-                    </h1>
+                    </h2>
                     <p className="font-opensans text-[16px] md:text-[18px] text-[#FAF3F3] mt-6">
                       {t('subtitle')}
                     </p>

@@ -14,9 +14,11 @@ export default function OpenFeedbackButton({ label, className }: Props) {
   return (
     <>
       <button
-        onClick={() => setOpen(true)}
-        className={className}
-      >
+  onClick={() => setOpen(true)}
+  className={className}
+  aria-label={label}
+>
+
         {label}
       </button>
 

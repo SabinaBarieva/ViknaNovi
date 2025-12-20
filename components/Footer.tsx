@@ -19,8 +19,10 @@ export default function Footer() {
 
         {/* CONTACTS */}
         <div className="text-center mb-6">
-          <p className="text-sm opacity-90 mb-1">+ 38 (067) 400-02-02</p>
-          <p className="text-sm opacity-90">vn.callcenter@viknanovi.ua</p>
+          <p className="text-sm opacity-90 mb-1"><a href="tel:+380674000202">+38 (067) 400-02-02</a></p>
+          <p className="text-sm opacity-90"> <a href="mailto:vn.callcenter@viknanovi.ua">
+    vn.callcenter@viknanovi.ua
+  </a></p>
         </div>
 
         {/* SOCIAL ICONS */}
@@ -52,32 +54,7 @@ export default function Footer() {
         <div className="w-full h-px bg-white/40 mb-8"></div>
       </div>
 
-      {/* SEO: структурированные данные о компании */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            "name": "ВікнаНові",
-            "url": "https://viknanovi.ua",
-            "logo": "https://viknanovi.ua/logofooter.svg",
-            "contactPoint": {
-              "@type": "ContactPoint",
-              "telephone": "+38 (067) 400-02-02",
-              "email": "vn.callcenter@viknanovi.ua",
-              "contactType": "customer support",
-              "areaServed": "UA",
-              "availableLanguage": ["Ukrainian", "Russian"]
-            },
-            "sameAs": [
-              "https://www.facebook.com/viknanovi.official?locale=ru_RU",
-              "https://www.instagram.com/viknanovi_original/",
-              "https://www.youtube.com/@viknanovi_original"
-            ]
-          })
-        }}
-      />
+      
     </footer>
   );
 }

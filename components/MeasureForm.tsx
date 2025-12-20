@@ -64,7 +64,6 @@ export default function MeasureForm() {
           <img
             src="/measure-bg.jpg"
             alt="Фонове зображення заміру вікон"
-            loading="lazy"
             className="absolute inset-0 w-full h-full object-cover"
           />
 

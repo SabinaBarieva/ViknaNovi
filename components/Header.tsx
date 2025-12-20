@@ -53,10 +53,15 @@ export default function Header() {
 
         {/* Десктоп логотип */}
         <div className="hidden lg:block xl:hidden w-[17px] h-[31px]">
+          <Link href="/" aria-label="ViknaNovi — головна сторінка">
           <Image src="/logo.svg" alt="Logo" width={127} height={31} className="w-full h-auto" />
+          </Link>
+
         </div>
         <div className="hidden xl:block w-[218px] h-[51.5px]">
+          <Link href="/" aria-label="ViknaNovi — головна сторінка">
           <Image src="/logo.svg" alt="Logo" width={218} height={51} className="w-full h-auto" />
+          </Link>
         </div>
 
         {/* НАВИГАЦИЯ */}

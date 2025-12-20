@@ -32,21 +32,7 @@ export default function AdvantagesSection() {
       </div>
 
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            "itemListElement": items.map((item, index) => ({
-              "@type": "ListItem",
-              "position": index + 1,
-              "name": item.title,
-              "description": item.text,
-            })),
-          }),
-        }}
-      /> 
+     
     </section>
   );
 }

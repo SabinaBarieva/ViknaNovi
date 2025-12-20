@@ -34,13 +34,14 @@ export default function WindowDesigner() {
 
   return (
     <section className="container pt-[40px]">
-      <h1 className="title">{t("title")}</h1>
+      <h2 className="title">{t("title")}</h2>
 
       <div className="grid md:flex gap-10 relative overflow-hidden md:justify-between bg-cover p-10 lg:p-20">
         <Image
           src="/windowsection.png"
           fill
-          alt="Window background"
+          alt="Дизайн пластикового вікна"
+
           className="absolute inset-0 w-full h-full object-cover"
           loading="lazy"
         />
@@ -48,7 +49,7 @@ export default function WindowDesigner() {
 
         {/* Блок фільтрів */}
         <aside className="w-full h-max md:w-[320px] z-10 bg-white p-5 lg:p-10 flex flex-col gap-6">
-          <h2 className="font-mont text-primary font-semibold text-[24px] uppercase">{t("filters")}</h2>
+          <h3 className="font-mont text-primary font-semibold text-[24px] uppercase">{t("filters")}</h3>
 
           <div>
             <h3 className="uppercase mb-4 font-mont text-primary font-semibold text-[18px]">{t("frameColors")}</h3>

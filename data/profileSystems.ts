@@ -193,7 +193,7 @@ code: "WR 700",
 {
   id: "rehau60",
   brand: "Rehau",
-  segment: "premium",
+  segment: "standard",
   code: "60",
   name: { uk: "REHAU 60", ru: "REHAU 60" },
   image: "/profile/rehau60.webp",

@@ -122,17 +122,25 @@ export default function FeedbackModal({ open, onClose }: Props) {
 
   // ---------------------- MAIN JSX -----------------------
   return createPortal(
-    <div className="fixed inset-0 z-50 flex justify-center items-center bg-black/40 backdrop-blur-sm">
+    <div
+  className="fixed inset-0 z-50 flex justify-center items-center bg-black/40 backdrop-blur-sm"
+  role="dialog"
+  aria-modal="true"
+>
+
 
       <div className="w-[360px] bg-primary text-white p-6  relative animate-fadeIn">
 
         {/* CLOSE BUTTON */}
         <button
-          onClick={onClose}
-          className="absolute right-4 top-4 text-white text-3xl leading-none"
-        >
-          ×
-        </button>
+  onClick={onClose}
+  aria-label={t("close")}
+  className="absolute right-4 top-4 text-white text-3xl leading-none"
+>
+  ×
+</button>
+
+          
 
         {/* TITLE */}
         <h2 className="text-[26px] font-mont font-semibold uppercase mb-6 pr-6">

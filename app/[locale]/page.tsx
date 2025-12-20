@@ -1,3 +1,5 @@
+import type { Metadata } from 'next';
+import { getLocale } from 'next-intl/server';
 
 import AboutSection from '@/components/AboutSection';
 import AdvantagesSection from '@/components/AdvantagesSection';
@@ -7,45 +9,104 @@ import MeasureForm from '@/components/MeasureForm';
 import Portfolio from '@/components/Portfolio';
 import ProfileSystems from '@/components/ProfileSystems';
 import PromoModal from '@/components/PromoModal';
-
 import ReviewsSection from '@/components/ReviewsSection';
-import SaleSlider from '@/components/SaleSlider';
 import SaleSliderServer from '@/components/SaleSliderServer';
 import ServicesSection from '@/components/ServicesSection';
 import StepsSection from '@/components/StepsSection';
 import BannerSlider from '@/components/Swiper';
 import WindowSVGDesigner from '@/components/Windowsdesign';
-import WindowColorDesigner from '@/components/Windowsdesign';
-import {useTranslations} from 'next-intl';
+import SeoJsonLd from '@/components/SeoJsonLd';
 
+type Locale = 'uk' | 'ru';
 
-export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
+// ✅ SEO (Turbopack-safe)
+export async function generateMetadata(): Promise<Metadata> {
+  const raw = await getLocale();
+  const locale: Locale = raw === 'ru' ? 'ru' : 'uk';
+  const isUk = locale === 'uk';
 
-  const lang = locale === "ru" ? "ru" : "uk";
+  const title = isUk
+    ? 'ViknaNovі — металопластикові вікна та двері'
+    : 'ViknaNovі — металлопластиковые окна и двери';
+
+  const description = isUk
+    ? 'Продаж та встановлення металопластикових вікон, дверей і розсувних систем. Швидкий монтаж, гарантія якості.'
+    : 'Продажа и установка металлопластиковых окон, дверей и раздвижных систем. Быстрый монтаж и гарантия качества.';
+
+  const url = `https://viknanovi.shop/${locale}`;
+
+  return {
+    title,
+    description,
+    metadataBase: new URL('https://viknanovi.shop'),
+    alternates: {
+      canonical: `/${locale}`,
+      languages: {
+        uk: '/uk',
+        ru: '/ru',
+      },
+    },
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: 'ViknaNovі',
+      locale: isUk ? 'uk_UA' : 'ru_RU',
+      type: 'website',
+      images: [
+        {
+          url: '/og-image.jpg', // положи файл в public/og-image.jpg
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['/og-image.jpg'],
+    },
+    icons: {
+      icon: '/favicon.ico',
+    },
+  };
+}
+
+// ✅ PAGE (Turbopack-safe)
+export default async function HomePage() {
+  const raw = await getLocale();
+  const locale: Locale = raw === 'ru' ? 'ru' : 'uk';
 
   return (
-    <>
-    <main className=' pt-[80px]'>
+    <main className="pt-[80px]">
+  
+      <h1 className="sr-only">
+        {locale === 'uk'
+          ? 'Металопластикові вікна та двері — продаж і монтаж'
+          : 'Металлопластиковые окна и двери — продажа и монтаж'}
+      </h1>
+
+      {/* ✅ Schema.org */}
+      <SeoJsonLd locale={locale} />
+
       <BannerSlider />
-      <AboutSection/>
-      <PromoModal/>
-      <ServicesSection/>
-      <ProfileSystems/>
-      <WindowSVGDesigner/>
-      <FurnituraSection/>
-
-            <SaleSliderServer lang={lang} /> 
-             <Portfolio/>
-      <AdvantagesSection/>
-                  <MeasureForm/>
-
-      
-     
-      <StepsSection/>
-      <ReviewsSection/>
-      <ContactForm/>
-      </main>
-    </>
+      <AboutSection />
+      <PromoModal />
+      <ServicesSection />
+      <ProfileSystems />
+      <WindowSVGDesigner />
+      <FurnituraSection />
+      <SaleSliderServer lang={locale} />
+      <Portfolio />
+      <AdvantagesSection />
+      <MeasureForm />
+      <StepsSection />
+      <ReviewsSection />
+      <ContactForm />
+    </main>
   );
 }
+
+

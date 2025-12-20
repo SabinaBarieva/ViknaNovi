@@ -1,13 +1,11 @@
-import createMiddleware from "next-intl/middleware";
+import createMiddleware from 'next-intl/middleware';
 
 export default createMiddleware({
-  locales: ["uk", "ru"],
-  defaultLocale: "uk",
+  locales: ['uk', 'ru'],
+  defaultLocale: 'uk',
+  localePrefix: 'as-needed',
 });
 
 export const config = {
-  matcher: [
-    // исключить api, _next, файлы и т.п.
-    "/((?!api|_next|.*\\..*).*)",
-  ],
+  matcher: ['/((?!api|_next|.*\\..*).*)'],
 };

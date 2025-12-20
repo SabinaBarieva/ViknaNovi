@@ -39,9 +39,9 @@ export default function SaleSlider({ data, lang }: Props) {
               <div className="absolute inset-0 bg-black/70"></div>
 
               <div className="relative p-10 md:p-20 z-10 max-w-[800px] mx-auto">
-                <h1 className="font-mont uppercase text-[26px] md:text-[38px] text-[#FAF3F3] font-semibold mb-4">
+                <h2 className="font-mont uppercase text-[26px] md:text-[38px] text-[#FAF3F3] font-semibold mb-4">
                   {slide.title?.[lang]}
-                </h1>
+                </h2>
                 <p className="font-opensans text-[16px] md:text-[18px] text-white font-normal mb-6">
                   {slide.description?.[lang]}
                 </p>

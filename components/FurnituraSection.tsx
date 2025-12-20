@@ -42,24 +42,7 @@ export default function FurnituraSection() {
         </div>
       </div>
 
-      {/* SEO Schema.org — список брендов фурнітури */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            "name": "Бренди фурнітури",
-            "itemListElement": brands.map((brand, index) => ({
-              "@type": "Product",
-              "position": index + 1,
-              "name": brand.name,
-              "image": `https://viknanovi.ua${brand.img}`,
-              "brand": brand.name
-            }))
-          })
-        }}
-      />
+
     </section>
   );
 }
