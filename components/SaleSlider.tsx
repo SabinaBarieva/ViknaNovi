@@ -24,31 +24,41 @@ export default function SaleSlider({ data, lang }: Props) {
         pagination={{ clickable: true }}
         autoplay={{ delay: 4000 }}
         loop={data.length > 1}
-        className="h-full"
+        // ✅ “чуть меньше”, чем hero. Меняй значения под себя.
+        className="h-[660px] md:h-[500px] lg:h-[600px]"
       >
         {data.map((slide: any, i: number) => (
-          <SwiperSlide key={slide._key || i}>
+          <SwiperSlide key={slide._key || i} className="h-full">
             <div
-              className="h-max flex items-center justify-center text-center px-4 relative"
+              // ✅ растягиваем фон/контент на всю высоту слайда
+              className="h-full w-full flex items-center justify-center text-center px-4 relative"
               style={{
                 backgroundImage: `url(${urlFor(slide.backgroundImage).url()})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }}
             >
-              <div className="absolute inset-0 bg-black/70"></div>
+              <div className="absolute inset-0 bg-black/70" />
 
-              <div className="relative p-10 md:p-20 z-10 max-w-[800px] mx-auto">
+              {/* ✅ делаем контейнер контента стабильной ширины */}
+              <div className="relative p-10 md:p-20 z-10 max-w-[800px] mx-auto w-full">
                 <h2 className="font-mont uppercase text-[26px] md:text-[38px] text-[#FAF3F3] font-semibold mb-4">
                   {slide.title?.[lang]}
                 </h2>
+
                 <p className="font-opensans text-[16px] md:text-[18px] text-white font-normal mb-6">
                   {slide.description?.[lang]}
                 </p>
-                <OpenFeedbackButton
-                  label={slide.buttonText?.[lang]}
-                  className="z-10 w-full uppercase h-[55px] md:h-[63px] font-opensans bg-primary text-white text-[18px] md:text-[20px] font-normal hover:bg-accent transition md:w-[293px]"
-                />
+
+                {/* ✅ НЕ трогаем кнопку: фиксируем одинаковую ширину через обёртку на мобилке */}
+                <div className="w-full flex justify-center">
+                  <div className="w-[293px] max-w-full">
+                    <OpenFeedbackButton
+                      label={slide.buttonText?.[lang]}
+                      className="z-10 w-full uppercase h-[55px] md:h-[63px] font-opensans bg-primary text-white text-[18px] md:text-[20px] font-normal hover:bg-accent transition md:w-[293px]"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </SwiperSlide>
