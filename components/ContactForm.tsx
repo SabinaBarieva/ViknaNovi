@@ -4,6 +4,7 @@ import { useState } from "react";
 import { IMaskInput } from "react-imask";
 import { useTranslations } from "next-intl";
 import SuccessModal from "./SuccessModal";
+import { trackLead } from "@/lib/trackLead"; // ✅ добавили
 
 export default function FeedbackForm() {
   const t = useTranslations("contact");
@@ -73,6 +74,10 @@ export default function FeedbackForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // 🔒 защита от двойного клика
+    if (sending) return;
+
     if (!validate()) return;
 
     setSending(true);
@@ -85,6 +90,9 @@ export default function FeedbackForm() {
       });
 
       if (res.ok) {
+        // ✅ отправляем событие в аналитику
+        trackLead("feedback_form");
+
         setSuccess(true);
         setForm({
           name: "",
@@ -109,22 +117,31 @@ export default function FeedbackForm() {
   ) => {
     const target = e.target as HTMLInputElement;
     const { name, value, type, checked } = target;
+
     setForm({
       ...form,
       [name]: type === "checkbox" ? checked : value,
     });
+
     setErrors({ ...errors, [name]: "" });
   };
 
   const getInputClass = (field: keyof FormFields) => {
-    const isFocused = field in focused ? focused[field as keyof typeof focused] : false;
+    const isFocused =
+      field in focused ? focused[field as keyof typeof focused] : false;
 
     return `outline-none h-[48px] px-4 w-full text-[16px] font-opensans transition-all duration-200
-      ${isDisabled ? "bg-primary text-white cursor-not-allowed" :
-      errors[field] ? "bg-[#FF393280] bg-opacity-50" :
-      isFocused ? "bg-[#0055FF80] bg-opacity-50" :
-      form[field] ? "bg-[#0B0B7A] text-white border border-[#0B0B7A]" :
-      "bg-[#EDEEEF] border border-secondary"}`;
+      ${
+        isDisabled
+          ? "bg-primary text-white cursor-not-allowed"
+          : errors[field]
+          ? "bg-[#FF393280] bg-opacity-50"
+          : isFocused
+          ? "bg-[#0055FF80] bg-opacity-50"
+          : form[field]
+          ? "bg-[#0B0B7A] text-white border border-[#0B0B7A]"
+          : "bg-[#EDEEEF] border border-secondary"
+      }`;
   };
 
   return (
@@ -132,61 +149,48 @@ export default function FeedbackForm() {
       <div className="mx-auto max-w-[1240px] px-4 grid grid-cols-1 md:grid-cols-2 gap-12">
         <div className="flex flex-col">
           <h2 className="title">{t("title")}</h2>
-          <p className="text-secondary font-opensans text-[14px] md:text-[16px] mb-6">{t("desc")}</p>
+          <p className="text-secondary font-opensans text-[14px] md:text-[16px] mb-6">
+            {t("desc")}
+          </p>
           <div className="text-secondary font-opensans text-[16px]">
             <p>Телефон: +38 (067) 400-02-02</p>
             <p>Email: vn.callcenter@viknanovi.ua</p>
           </div>
-          <div className="flex gap-4 mt-6">
-            <a href="#"><img src="/tg.webp" className="w-6" alt="Telegram" /></a>
-            <a href="https://www.instagram.com/viknanovi_original/" rel="noopener noreferrer" target="_blank"><img src="/contactform/insta.svg" className="w-6" alt="Instagram" /></a>
-            <a href="#"><img src="/viber.png" className="w-6" alt="Viber" /></a>
-          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full lg:ml-auto">
-          <div>
-            <input
-              name="name"
-              type="text"
-              value={form.name}
-              onChange={handleChange}
-              onFocus={() => setFocused({ ...focused, name: true })}
-              onBlur={() => setFocused({ ...focused, name: false })}
-              placeholder={t("inputs.name")}
-              disabled={isDisabled}
-              className={getInputClass("name")}
-              required
-            />
-            {errors.name && <p className="text-[#FF393280] text-[16px] mt-1">{errors.name}</p>}
-            {isSuccess.name && !errors.name && (
-              <p className="text-[#60B52780] text-sm mt-1">Успешно</p>
-            )}
-          </div>
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-4 w-full lg:ml-auto"
+        >
+          <input
+            name="name"
+            type="text"
+            value={form.name}
+            onChange={handleChange}
+            onFocus={() => setFocused({ ...focused, name: true })}
+            onBlur={() => setFocused({ ...focused, name: false })}
+            placeholder={t("inputs.name")}
+            disabled={isDisabled}
+            className={getInputClass("name")}
+            required
+          />
 
-          <div>
-            <IMaskInput
-              mask="+38 (000) 000-00-00"
-              value={form.phone}
-              onAccept={(value: any) => {
-                setForm({ ...form, phone: value });
-                setErrors({ ...errors, phone: "" });
-              }}
-              onFocus={() => setFocused({ ...focused, phone: true })}
-              onBlur={() => setFocused({ ...focused, phone: false })}
-              placeholder={t("inputs.tel")}
-              className={getInputClass("phone")}
-              required
-            />
-            {errors.phone && <p className="text-[#FF393280] text-sm">{errors.phone}</p>}
-          </div>
+          <IMaskInput
+            mask="+38 (000) 000-00-00"
+            value={form.phone}
+            onAccept={(value: any) => {
+              setForm({ ...form, phone: value });
+              setErrors({ ...errors, phone: "" });
+            }}
+            placeholder={t("inputs.tel")}
+            className={getInputClass("phone")}
+            required
+          />
 
           <textarea
             name="message"
             value={form.message}
             onChange={handleChange}
-            onFocus={() => setFocused({ ...focused, message: true })}
-            onBlur={() => setFocused({ ...focused, message: false })}
             placeholder={t("inputs.msg")}
             className={getInputClass("message")}
           />
@@ -196,15 +200,14 @@ export default function FeedbackForm() {
               type="checkbox"
               checked={form.agree}
               onChange={handleChange}
-              className="mt-1"
               name="agree"
               required
             />
             <span>{t("agree")}</span>
           </label>
-          {errors.agree && <p className="text-[#FF393280] text-sm">{errors.agree}</p>}
 
           <button
+            type="submit"
             disabled={sending}
             className="h-[55px] bg-primary hover:bg-accent text-white uppercase font-montserrat text-[16px] rounded transition"
           >
@@ -220,8 +223,6 @@ export default function FeedbackForm() {
           onClose={() => setSuccess(false)}
         />
       )}
-
-
     </section>
   );
 }

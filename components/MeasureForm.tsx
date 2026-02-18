@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from 'next-intl';
 import { IMaskInput } from "react-imask";
 import SuccessModal from "./SuccessModal";
+import { trackLead } from "@/lib/trackLead"; // ✅ добавили
 
 export default function MeasureForm() {
   const t = useTranslations("measure");
@@ -34,6 +35,10 @@ export default function MeasureForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // 🔒 защита от двойной отправки
+    if (sending) return;
+
     if (!validate()) return;
 
     setSending(true);
@@ -46,15 +51,20 @@ export default function MeasureForm() {
       });
 
       if (res.ok) {
+        // ✅ событие в аналитику только после успеха
+        trackLead("measure_form");
+
         setSuccess(true);
         setForm({ name: "", phone: "", agree: false });
         setErrors({});
+      } else {
+        alert(t("errors.server"));
       }
     } catch {
       alert(t("errors.server"));
+    } finally {
+      setSending(false);
     }
-
-    setSending(false);
   };
 
   return (
@@ -70,7 +80,6 @@ export default function MeasureForm() {
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/70"></div>
 
           <div className="relative z-10 mx-auto px-4 py-4 h-full flex flex-col justify-center items-center">
-
             <h2 className="text-[#FAF3F3] text-[26px] md:text-[38px] font-mont font-semibold uppercase text-center">
               {t("title")}
             </h2>

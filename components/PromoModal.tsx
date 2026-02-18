@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { createPortal } from "react-dom";
 
 import SuccessModal from "./SuccessModal";
+import { trackLead } from "@/lib/trackLead"; // ✅ добавили
 
 type FormFields = {
   name: string;
@@ -38,7 +39,6 @@ export default function PromoModal() {
 
   useEffect(() => setMounted(true), []);
 
-
   useEffect(() => {
     const timer = setTimeout(() => setOpen(true), 800);
     return () => clearTimeout(timer);
@@ -61,6 +61,10 @@ export default function PromoModal() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // 🔒 защита от двойной отправки
+    if (sending) return;
+
     if (!validate()) return;
 
     setSending(true);
@@ -73,25 +77,28 @@ export default function PromoModal() {
       });
 
       if (res.ok) {
+        // ✅ событие в аналитику только после успеха
+        trackLead("promo_modal");
+
         setSuccess(true);
         setForm({ name: "", phone: "", city: "" });
         setErrors({});
         setTimeout(() => setOpen(false), 3000);
+      } else {
+        alert(t("errors.server"));
       }
     } catch (err) {
       alert(t("errors.server"));
+    } finally {
+      setSending(false);
     }
-
-    setSending(false);
   };
-
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
     setErrors({ ...errors, [name]: "" });
   };
-
 
   const successModal =
     success && mounted
@@ -111,7 +118,6 @@ export default function PromoModal() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
       <div className="relative w-full max-w-sm overflow-hidden rounded-2xl bg-[#0B0F1A] p-6 text-white shadow-xl">
-
         {/* ❌ Close */}
         <button
           onClick={() => setOpen(false)}
@@ -121,8 +127,20 @@ export default function PromoModal() {
         </button>
 
         {/* 🎀 TOP / BOTTOM */}
-        <Image src="/promomodal/top.webp" alt="" width={160} height={160} className="absolute right-0 top-0 z-10" />
-        <Image src="/promomodal/bottom.webp" alt="" width={160} height={160} className="absolute bottom-0 left-0 z-10" />
+        <Image
+          src="/promomodal/top.webp"
+          alt=""
+          width={160}
+          height={160}
+          className="absolute right-0 top-0 z-10"
+        />
+        <Image
+          src="/promomodal/bottom.webp"
+          alt=""
+          width={160}
+          height={160}
+          className="absolute bottom-0 left-0 z-10"
+        />
 
         {/* 🎁 GIFT */}
         <div className="relative z-20 mb-4 flex justify-center">
@@ -130,14 +148,12 @@ export default function PromoModal() {
         </div>
 
         <h2 className="relative z-20 mb-6 text-center text-xl font-bold">
-          {t("title")}{" "}
-          <span className="text-cyan-400">500 грн</span> <br />
+          {t("title")} <span className="text-cyan-400">500 грн</span> <br />
           {t("subtitle")}
         </h2>
 
         {/* ✅ FORM */}
         <form onSubmit={handleSubmit} className="relative z-20 space-y-4">
-
           {/* CITY */}
           <div>
             <input
@@ -185,7 +201,6 @@ export default function PromoModal() {
           >
             {sending ? t("sending") : t("submit")}
           </button>
-
         </form>
 
         {/* ✅ SUCCESS MODAL */}

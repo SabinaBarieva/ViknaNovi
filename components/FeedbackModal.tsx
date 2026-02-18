@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { IMaskInput } from "react-imask";
 import SuccessModal from "./SuccessModal";
+import { trackLead } from "@/lib/trackLead"; // ✅ добавили
 
 type FormFields = {
   name: string;
@@ -34,7 +35,7 @@ export default function FeedbackModal({ open, onClose }: Props) {
     name: "",
     phone: "",
     message: "",
-    agree: false
+    agree: false,
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -54,8 +55,6 @@ export default function FeedbackModal({ open, onClose }: Props) {
     const digits = form.phone.replace(/\D/g, "");
     if (digits.length < 12) newErrors.phone = t("errors.phone");
 
-    // if (!form.message.trim()) newErrors.message = t("errors.required");
-
     if (!form.agree) newErrors.agree = t("errors.agree");
 
     setErrors(newErrors);
@@ -65,6 +64,10 @@ export default function FeedbackModal({ open, onClose }: Props) {
   // ---------------------- SUBMIT -----------------------
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // 🔒 защита от двойной отправки
+    if (sending) return;
+
     if (!validate()) return;
 
     setSending(true);
@@ -77,17 +80,22 @@ export default function FeedbackModal({ open, onClose }: Props) {
       });
 
       if (res.ok) {
+        // ✅ событие в аналитику только после успеха
+        trackLead("feedback_modal");
+
         setSuccess(true);
 
         // Clear form after success
-        setForm({ name: "", phone: "",  message: "", agree: false });
+        setForm({ name: "", phone: "", message: "", agree: false });
         setErrors({});
+      } else {
+        alert(t("errors.server"));
       }
     } catch (err) {
       alert(t("errors.server"));
+    } finally {
+      setSending(false);
     }
-
-    setSending(false);
   };
 
   // ---------------------- INPUT HANDLER -----------------------
@@ -99,7 +107,7 @@ export default function FeedbackModal({ open, onClose }: Props) {
 
     setForm({
       ...form,
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     });
 
     setErrors({ ...errors, [name]: "" });
@@ -123,24 +131,18 @@ export default function FeedbackModal({ open, onClose }: Props) {
   // ---------------------- MAIN JSX -----------------------
   return createPortal(
     <div
-  className="fixed inset-0 z-50 flex justify-center items-center bg-black/40 backdrop-blur-sm"
-  role="dialog"
-  aria-modal="true"
->
-
-
-      <div className="w-[360px] bg-primary text-white p-6  relative animate-fadeIn">
-
+      className="fixed inset-0 z-50 flex justify-center items-center bg-black/40 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div className="w-[360px] bg-primary text-white p-6 relative animate-fadeIn">
         {/* CLOSE BUTTON */}
         <button
-  onClick={onClose}
-  aria-label={t("close")}
-  className="absolute right-4 top-4 text-white text-3xl leading-none"
->
-  ×
-</button>
-
-          
+          onClick={onClose}
+          className="absolute right-4 top-4 text-white text-3xl leading-none"
+        >
+          ×
+        </button>
 
         {/* TITLE */}
         <h2 className="text-[26px] font-mont font-semibold uppercase mb-6 pr-6">
@@ -148,8 +150,10 @@ export default function FeedbackModal({ open, onClose }: Props) {
         </h2>
 
         {/* FORM */}
-        <form className="flex flex-col font-opensans text-[16px] gap-4" onSubmit={handleSubmit}>
-
+        <form
+          className="flex flex-col font-opensans text-[16px] gap-4"
+          onSubmit={handleSubmit}
+        >
           {/* NAME */}
           <div>
             <input
@@ -159,7 +163,9 @@ export default function FeedbackModal({ open, onClose }: Props) {
               placeholder={t("name")}
               className="w-full font-opensans text-[16px] bg-transparent border border-white/50 px-3 py-2 placeholder-white/70"
             />
-            {errors.name && <p className="text-red-300 text-sm">{errors.name}</p>}
+            {errors.name && (
+              <p className="text-red-300 text-sm">{errors.name}</p>
+            )}
           </div>
 
           {/* PHONE */}
@@ -175,10 +181,10 @@ export default function FeedbackModal({ open, onClose }: Props) {
               placeholder={t("phone")}
               className="w-full bg-transparent border border-white/50 rounded px-3 py-2 placeholder-white/70"
             />
-            {errors.phone && <p className="text-red-300 text-sm">{errors.phone}</p>}
+            {errors.phone && (
+              <p className="text-red-300 text-sm">{errors.phone}</p>
+            )}
           </div>
-
-
 
           {/* MESSAGE */}
           <div>
@@ -190,11 +196,10 @@ export default function FeedbackModal({ open, onClose }: Props) {
               rows={4}
               className="w-full bg-transparent border border-white/50 rounded px-3 py-2 placeholder-white/70 resize-none"
             />
-            {errors.message && <p className="text-red-300 text-sm">{errors.message}</p>}
+            {errors.message && (
+              <p className="text-red-300 text-sm">{errors.message}</p>
+            )}
           </div>
-
-          {/* CHECKBOX */}
-
 
           {/* BUTTON */}
           <button
@@ -204,7 +209,9 @@ export default function FeedbackModal({ open, onClose }: Props) {
           >
             {sending ? t("sending") : t("submit")}
           </button>
-                    <label className="flex font-opensans items-start gap-2 text-[14px] mt-1 leading-tight">
+
+          {/* CHECKBOX */}
+          <label className="flex font-opensans items-start gap-2 text-[14px] mt-1 leading-tight">
             <input
               type="checkbox"
               name="agree"
@@ -214,7 +221,9 @@ export default function FeedbackModal({ open, onClose }: Props) {
             />
             <span>{t("policy")}</span>
           </label>
-          {errors.agree && <p className="text-red-300 text-sm">{errors.agree}</p>}
+          {errors.agree && (
+            <p className="text-red-300 text-sm">{errors.agree}</p>
+          )}
         </form>
 
         {/* SUCCESS MODAL PORTAL */}
@@ -227,11 +236,16 @@ export default function FeedbackModal({ open, onClose }: Props) {
           animation: fadeIn 0.25s ease;
         }
         @keyframes fadeIn {
-          from { opacity: 0; transform: scale(0.95); }
-          to { opacity: 1; transform: scale(1); }
+          from {
+            opacity: 0;
+            transform: scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
         }
       `}</style>
-
     </div>,
     document.getElementById("modal-root")!
   );
