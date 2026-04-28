@@ -3,8 +3,9 @@ import nodemailer from "nodemailer";
 
 export async function POST(req: Request) {
   try {
-    const { name, phone, email, message, city } = await req.json();
+    const { name, phone, email, message, city, token } = await req.json();
 
+    // Проверка обязательных полей
     if (!name || !phone) {
       return NextResponse.json(
         { error: "Missing required fields" },
@@ -12,6 +13,35 @@ export async function POST(req: Request) {
       );
     }
 
+    // ✅ Проверка капчи
+    if (!token) {
+      return NextResponse.json(
+        { error: "Captcha required" },
+        { status: 400 }
+      );
+    }
+
+    const verify = await fetch(
+      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `secret=${process.env.TURNSTILE_SECRET}&response=${token}`,
+      }
+    );
+
+    const captcha = await verify.json();
+
+    if (!captcha.success) {
+      return NextResponse.json(
+        { error: "Captcha failed" },
+        { status: 400 }
+      );
+    }
+
+    // 📧 Отправка письма (только если капча пройдена)
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -20,7 +50,7 @@ export async function POST(req: Request) {
       },
     });
 
-    const isPromo = Boolean(city); 
+    const isPromo = Boolean(city);
 
     await transporter.sendMail({
       from: process.env.SMTP_USER,

@@ -5,9 +5,10 @@ import Image from "next/image";
 import { IMaskInput } from "react-imask";
 import { useTranslations } from "next-intl";
 import { createPortal } from "react-dom";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 import SuccessModal from "./SuccessModal";
-import { trackLead } from "@/lib/trackLead"; // ✅ добавили
+import { trackLead } from "@/lib/trackLead";
 
 type FormFields = {
   name: string;
@@ -37,6 +38,9 @@ export default function PromoModal() {
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  // 👇 токен капчи
+  const [token, setToken] = useState("");
+
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {
@@ -62,10 +66,14 @@ export default function PromoModal() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 🔒 защита от двойной отправки
     if (sending) return;
-
     if (!validate()) return;
+
+    // ❗ проверка капчи
+    if (!token) {
+      alert("Подтвердите, что вы не робот");
+      return;
+    }
 
     setSending(true);
 
@@ -73,16 +81,19 @@ export default function PromoModal() {
       const res = await fetch("/api/sendContact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          token, // 👈 отправляем капчу
+        }),
       });
 
       if (res.ok) {
-        // ✅ событие в аналитику только после успеха
         trackLead("promo_modal");
 
         setSuccess(true);
         setForm({ name: "", phone: "", city: "" });
         setErrors({});
+        setToken(""); // сброс токена
         setTimeout(() => setOpen(false), 3000);
       } else {
         alert(t("errors.server"));
@@ -118,7 +129,6 @@ export default function PromoModal() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
       <div className="relative w-full max-w-sm overflow-hidden rounded-2xl bg-[#0B0F1A] p-6 text-white shadow-xl">
-        {/* ❌ Close */}
         <button
           onClick={() => setOpen(false)}
           className="text-[30px] absolute right-2 top-0 z-20 text-white/60 hover:text-white"
@@ -126,7 +136,6 @@ export default function PromoModal() {
           ✕
         </button>
 
-        {/* 🎀 TOP / BOTTOM */}
         <Image
           src="/promomodal/top.webp"
           alt=""
@@ -142,7 +151,6 @@ export default function PromoModal() {
           className="absolute bottom-0 left-0 z-10"
         />
 
-        {/* 🎁 GIFT */}
         <div className="relative z-20 mb-4 flex justify-center">
           <Image src="/promomodal/priz.webp" alt="" width={90} height={90} />
         </div>
@@ -152,9 +160,7 @@ export default function PromoModal() {
           {t("subtitle")}
         </h2>
 
-        {/* ✅ FORM */}
         <form onSubmit={handleSubmit} className="relative z-20 space-y-4">
-          {/* CITY */}
           <div>
             <input
               name="city"
@@ -166,7 +172,6 @@ export default function PromoModal() {
             {errors.city && <p className="text-red-400 text-sm">{errors.city}</p>}
           </div>
 
-          {/* NAME */}
           <div>
             <input
               name="name"
@@ -178,7 +183,6 @@ export default function PromoModal() {
             {errors.name && <p className="text-red-400 text-sm">{errors.name}</p>}
           </div>
 
-          {/* PHONE */}
           <div>
             <IMaskInput
               mask="+38 (000) 000-00-00"
@@ -194,6 +198,12 @@ export default function PromoModal() {
             {errors.phone && <p className="text-red-400 text-sm">{errors.phone}</p>}
           </div>
 
+          {/* 👇 КАПЧА */}
+          <Turnstile
+            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+            onSuccess={(token) => setToken(token)}
+          />
+
           <button
             type="submit"
             disabled={sending}
@@ -203,7 +213,6 @@ export default function PromoModal() {
           </button>
         </form>
 
-        {/* ✅ SUCCESS MODAL */}
         {successModal}
       </div>
     </div>

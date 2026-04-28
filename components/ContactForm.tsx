@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { IMaskInput } from "react-imask";
 import { useTranslations } from "next-intl";
+import { Turnstile } from "@marsidev/react-turnstile";
+
 import SuccessModal from "./SuccessModal";
-import { trackLead } from "@/lib/trackLead"; // ✅ добавили
+import { trackLead } from "@/lib/trackLead";
 
 export default function FeedbackForm() {
   const t = useTranslations("contact");
@@ -36,6 +38,8 @@ export default function FeedbackForm() {
     agree: false,
   });
 
+  const [token, setToken] = useState("");
+
   const [errors, setErrors] = useState<FormErrors>({});
   const [focused, setFocused] = useState<FieldStates>({
     name: false,
@@ -48,7 +52,7 @@ export default function FeedbackForm() {
     phone: false,
   });
 
-  const [isDisabled, setIsDisabled] = useState(false);
+  const [isDisabled] = useState(false);
   const [success, setSuccess] = useState(false);
   const [sending, setSending] = useState(false);
 
@@ -75,10 +79,13 @@ export default function FeedbackForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // 🔒 защита от двойного клика
     if (sending) return;
-
     if (!validate()) return;
+
+    if (!token) {
+      alert("Подтвердите, что вы не робот");
+      return;
+    }
 
     setSending(true);
 
@@ -86,11 +93,13 @@ export default function FeedbackForm() {
       const res = await fetch("/api/sendContact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          token,
+        }),
       });
 
       if (res.ok) {
-        // ✅ отправляем событие в аналитику
         trackLead("feedback_form");
 
         setSuccess(true);
@@ -101,15 +110,18 @@ export default function FeedbackForm() {
           agree: false,
         });
 
+        setToken("");
         setErrors({});
         setIsSuccess({ name: false, phone: false });
         setFocused({ name: false, phone: false, message: false });
+      } else {
+        alert(t("errors.server"));
       }
     } catch {
       alert(t("errors.server"));
+    } finally {
+      setSending(false);
     }
-
-    setSending(false);
   };
 
   const handleChange = (
@@ -205,6 +217,11 @@ export default function FeedbackForm() {
             />
             <span>{t("agree")}</span>
           </label>
+
+          <Turnstile
+            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+            onSuccess={(token) => setToken(token)}
+          />
 
           <button
             type="submit"
