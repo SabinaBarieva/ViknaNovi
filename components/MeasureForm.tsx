@@ -1,10 +1,12 @@
-'use client';
+"use client";
 
 import { useState } from "react";
-import { useTranslations } from 'next-intl';
+import { useTranslations } from "next-intl";
 import { IMaskInput } from "react-imask";
+import { Turnstile } from "@marsidev/react-turnstile";
+
 import SuccessModal from "./SuccessModal";
-import { trackLead } from "@/lib/trackLead"; // ✅ добавили
+import { trackLead } from "@/lib/trackLead";
 
 export default function MeasureForm() {
   const t = useTranslations("measure");
@@ -14,6 +16,10 @@ export default function MeasureForm() {
     phone: "",
     agree: false,
   });
+
+  const [token, setToken] = useState("");
+  const [startedAt, setStartedAt] = useState(Date.now());
+  const [company, setCompany] = useState("");
 
   const [errors, setErrors] = useState<any>({});
   const [sending, setSending] = useState(false);
@@ -36,10 +42,13 @@ export default function MeasureForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // 🔒 защита от двойной отправки
     if (sending) return;
-
     if (!validate()) return;
+
+    if (!token) {
+      alert("Подтвердите, что вы не робот");
+      return;
+    }
 
     setSending(true);
 
@@ -47,16 +56,29 @@ export default function MeasureForm() {
       const res = await fetch("/api/sendContact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          token,
+          company,
+          startedAt,
+        }),
       });
 
       if (res.ok) {
-        // ✅ событие в аналитику только после успеха
         trackLead("measure_form");
 
         setSuccess(true);
-        setForm({ name: "", phone: "", agree: false });
+
+        setForm({
+          name: "",
+          phone: "",
+          agree: false,
+        });
+
         setErrors({});
+        setToken("");
+        setCompany("");
+        setStartedAt(Date.now());
       } else {
         alert(t("errors.server"));
       }
@@ -88,7 +110,6 @@ export default function MeasureForm() {
               {t("subtitle")}
             </p>
 
-            {/* FORM */}
             <form
               onSubmit={handleSubmit}
               className="mt-6 w-full flex flex-col md:flex-row gap-3 md:gap-6 justify-center"
@@ -150,20 +171,38 @@ export default function MeasureForm() {
                 </div>
               </div>
 
-              {/* SUBMIT */}
-              <button
-                type="submit"
-                disabled={sending}
-                className="
-                  w-full md:w-[293px] h-[63px]
-                  bg-primary hover:bg-accent text-white
-                  font-opensans font-normal text-[20px] uppercase
-                  tracking-normal leading-[100%] text-center
-                  transition mt-4
-                "
-              >
-                {sending ? t("sending") : t("btn")}
-              </button>
+              {/* 🕳 Honeypot */}
+              <input
+                type="text"
+                name="company"
+                value={company}
+                onChange={(e) => setCompany(e.target.value)}
+                autoComplete="off"
+                tabIndex={-1}
+                className="hidden"
+              />
+
+              {/* ✅ CAPTCHA */}
+              <div className="flex flex-col gap-3">
+                <Turnstile
+                  siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                  onSuccess={(token) => setToken(token)}
+                />
+
+                <button
+                  type="submit"
+                  disabled={sending}
+                  className="
+                    w-full md:w-[293px] h-[63px]
+                    bg-primary hover:bg-accent text-white
+                    font-opensans font-normal text-[20px] uppercase
+                    tracking-normal leading-[100%] text-center
+                    transition
+                  "
+                >
+                  {sending ? t("sending") : t("btn")}
+                </button>
+              </div>
             </form>
 
             {/* CHECKBOX */}

@@ -38,8 +38,12 @@ export default function PromoModal() {
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  // 👇 токен капчи
+  // ✅ captcha
   const [token, setToken] = useState("");
+
+  // ✅ anti-bot
+  const [startedAt, setStartedAt] = useState(Date.now());
+  const [company, setCompany] = useState("");
 
   useEffect(() => setMounted(true), []);
 
@@ -69,7 +73,6 @@ export default function PromoModal() {
     if (sending) return;
     if (!validate()) return;
 
-    // ❗ проверка капчи
     if (!token) {
       alert("Подтвердите, что вы не робот");
       return;
@@ -83,7 +86,9 @@ export default function PromoModal() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
-          token, // 👈 отправляем капчу
+          token,
+          company,
+          startedAt,
         }),
       });
 
@@ -91,9 +96,18 @@ export default function PromoModal() {
         trackLead("promo_modal");
 
         setSuccess(true);
-        setForm({ name: "", phone: "", city: "" });
+
+        setForm({
+          name: "",
+          phone: "",
+          city: "",
+        });
+
         setErrors({});
-        setToken(""); // сброс токена
+        setToken("");
+        setCompany("");
+        setStartedAt(Date.now());
+
         setTimeout(() => setOpen(false), 3000);
       } else {
         alert(t("errors.server"));
@@ -107,8 +121,16 @@ export default function PromoModal() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
-    setErrors({ ...errors, [name]: "" });
+
+    setForm({
+      ...form,
+      [name]: value,
+    });
+
+    setErrors({
+      ...errors,
+      [name]: "",
+    });
   };
 
   const successModal =
@@ -129,6 +151,7 @@ export default function PromoModal() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
       <div className="relative w-full max-w-sm overflow-hidden rounded-2xl bg-[#0B0F1A] p-6 text-white shadow-xl">
+        {/* CLOSE */}
         <button
           onClick={() => setOpen(false)}
           className="text-[30px] absolute right-2 top-0 z-20 text-white/60 hover:text-white"
@@ -136,6 +159,7 @@ export default function PromoModal() {
           ✕
         </button>
 
+        {/* BG */}
         <Image
           src="/promomodal/top.webp"
           alt=""
@@ -143,6 +167,7 @@ export default function PromoModal() {
           height={160}
           className="absolute right-0 top-0 z-10"
         />
+
         <Image
           src="/promomodal/bottom.webp"
           alt=""
@@ -151,16 +176,29 @@ export default function PromoModal() {
           className="absolute bottom-0 left-0 z-10"
         />
 
+        {/* GIFT */}
         <div className="relative z-20 mb-4 flex justify-center">
-          <Image src="/promomodal/priz.webp" alt="" width={90} height={90} />
+          <Image
+            src="/promomodal/priz.webp"
+            alt=""
+            width={90}
+            height={90}
+          />
         </div>
 
         <h2 className="relative z-20 mb-6 text-center text-xl font-bold">
-          {t("title")} <span className="text-cyan-400">500 грн</span> <br />
+          {t("title")}{" "}
+          <span className="text-cyan-400">500 грн</span>
+          <br />
           {t("subtitle")}
         </h2>
 
-        <form onSubmit={handleSubmit} className="relative z-20 space-y-4">
+        {/* FORM */}
+        <form
+          onSubmit={handleSubmit}
+          className="relative z-20 space-y-4"
+        >
+          {/* CITY */}
           <div>
             <input
               name="city"
@@ -169,9 +207,15 @@ export default function PromoModal() {
               placeholder={t("city")}
               className="w-full rounded-lg bg-black/40 border border-white/10 px-4 py-3"
             />
-            {errors.city && <p className="text-red-400 text-sm">{errors.city}</p>}
+
+            {errors.city && (
+              <p className="text-red-400 text-sm">
+                {errors.city}
+              </p>
+            )}
           </div>
 
+          {/* NAME */}
           <div>
             <input
               name="name"
@@ -180,30 +224,60 @@ export default function PromoModal() {
               placeholder={t("name")}
               className="w-full rounded-lg bg-black/40 border border-white/10 px-4 py-3"
             />
-            {errors.name && <p className="text-red-400 text-sm">{errors.name}</p>}
+
+            {errors.name && (
+              <p className="text-red-400 text-sm">
+                {errors.name}
+              </p>
+            )}
           </div>
 
+          {/* PHONE */}
           <div>
             <IMaskInput
               mask="+38 (000) 000-00-00"
               name="phone"
               value={form.phone}
               onAccept={(value: any) => {
-                setForm({ ...form, phone: value });
-                setErrors({ ...errors, phone: "" });
+                setForm({
+                  ...form,
+                  phone: value,
+                });
+
+                setErrors({
+                  ...errors,
+                  phone: "",
+                });
               }}
               placeholder={t("phone")}
               className="w-full rounded-lg bg-black/40 border border-white/10 px-4 py-3"
             />
-            {errors.phone && <p className="text-red-400 text-sm">{errors.phone}</p>}
+
+            {errors.phone && (
+              <p className="text-red-400 text-sm">
+                {errors.phone}
+              </p>
+            )}
           </div>
 
-          {/* 👇 КАПЧА */}
+          {/* 🕳 Honeypot */}
+          <input
+            type="text"
+            name="company"
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+            autoComplete="off"
+            tabIndex={-1}
+            className="hidden"
+          />
+
+          {/* ✅ CAPTCHA */}
           <Turnstile
             siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
             onSuccess={(token) => setToken(token)}
           />
 
+          {/* SUBMIT */}
           <button
             type="submit"
             disabled={sending}

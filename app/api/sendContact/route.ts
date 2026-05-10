@@ -3,9 +3,17 @@ import nodemailer from "nodemailer";
 
 export async function POST(req: Request) {
   try {
-    const { name, phone, email, message, city, token } = await req.json();
+    const {
+      name,
+      phone,
+      email,
+      message,
+      city,
+      token,
+      company,
+      startedAt,
+    } = await req.json();
 
-    // Проверка обязательных полей
     if (!name || !phone) {
       return NextResponse.json(
         { error: "Missing required fields" },
@@ -13,7 +21,22 @@ export async function POST(req: Request) {
       );
     }
 
-    // ✅ Проверка капчи
+    // 🕳 Honeypot: скрытое поле должно быть пустым
+    if (company) {
+      return NextResponse.json(
+        { error: "Bot detected" },
+        { status: 400 }
+      );
+    }
+
+    // ⏱ Если форма отправлена быстрее 3 секунд — блок
+    if (!startedAt || Date.now() - Number(startedAt) < 3000) {
+      return NextResponse.json(
+        { error: "Too fast" },
+        { status: 400 }
+      );
+    }
+
     if (!token) {
       return NextResponse.json(
         { error: "Captcha required" },
@@ -41,7 +64,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // 📧 Отправка письма (только если капча пройдена)
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {

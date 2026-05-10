@@ -41,6 +41,8 @@ export default function FeedbackModal({ open, onClose }: Props) {
   });
 
   const [token, setToken] = useState("");
+  const [startedAt, setStartedAt] = useState(Date.now());
+  const [company, setCompany] = useState("");
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [sending, setSending] = useState(false);
@@ -70,7 +72,6 @@ export default function FeedbackModal({ open, onClose }: Props) {
     if (sending) return;
     if (!validate()) return;
 
-    // ❗ проверка капчи
     if (!token) {
       alert("Подтвердите, что вы не робот");
       return;
@@ -85,6 +86,8 @@ export default function FeedbackModal({ open, onClose }: Props) {
         body: JSON.stringify({
           ...form,
           token,
+          company,
+          startedAt,
         }),
       });
 
@@ -92,9 +95,18 @@ export default function FeedbackModal({ open, onClose }: Props) {
         trackLead("feedback_modal");
 
         setSuccess(true);
-        setForm({ name: "", phone: "", message: "", agree: false });
+
+        setForm({
+          name: "",
+          phone: "",
+          message: "",
+          agree: false,
+        });
+
         setErrors({});
         setToken("");
+        setCompany("");
+        setStartedAt(Date.now());
       } else {
         alert(t("errors.server"));
       }
@@ -147,7 +159,10 @@ export default function FeedbackModal({ open, onClose }: Props) {
           {t("title")}
         </h2>
 
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+        <form
+          className="flex flex-col gap-4"
+          onSubmit={handleSubmit}
+        >
           <input
             name="name"
             value={form.name}
@@ -177,7 +192,18 @@ export default function FeedbackModal({ open, onClose }: Props) {
             className="w-full bg-transparent border border-white/50 px-3 py-2"
           />
 
-          {/* 👇 КАПЧА */}
+          {/* 🕳 Honeypot */}
+          <input
+            type="text"
+            name="company"
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+            autoComplete="off"
+            tabIndex={-1}
+            className="hidden"
+          />
+
+          {/* ✅ CAPTCHA */}
           <Turnstile
             siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
             onSuccess={(token) => setToken(token)}
@@ -200,6 +226,10 @@ export default function FeedbackModal({ open, onClose }: Props) {
             />
             <span>{t("policy")}</span>
           </label>
+
+          {errors.agree && (
+            <p className="text-red-300 text-sm">{errors.agree}</p>
+          )}
         </form>
 
         {successModal}

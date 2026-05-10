@@ -39,6 +39,8 @@ export default function FeedbackForm() {
   });
 
   const [token, setToken] = useState("");
+  const [startedAt, setStartedAt] = useState(Date.now());
+  const [company, setCompany] = useState("");
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [focused, setFocused] = useState<FieldStates>({
@@ -96,6 +98,8 @@ export default function FeedbackForm() {
         body: JSON.stringify({
           ...form,
           token,
+          company,
+          startedAt,
         }),
       });
 
@@ -111,6 +115,8 @@ export default function FeedbackForm() {
         });
 
         setToken("");
+        setCompany("");
+        setStartedAt(Date.now());
         setErrors({});
         setIsSuccess({ name: false, phone: false });
         setFocused({ name: false, phone: false, message: false });
@@ -217,6 +223,16 @@ export default function FeedbackForm() {
             />
             <span>{t("agree")}</span>
           </label>
+
+          <input
+            type="text"
+            name="company"
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+            autoComplete="off"
+            tabIndex={-1}
+            className="hidden"
+          />
 
           <Turnstile
             siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
