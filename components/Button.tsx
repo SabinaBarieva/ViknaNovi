@@ -4,8 +4,8 @@ import { useState } from "react";
 import FeedbackModal from "@/components/FeedbackModal";
 
 interface Props {
-  label: string;       // текст кнопки
-  className?: string;  // додаткові стилі
+  label: string;       
+  className?: string;  
 }
 
 export default function OpenFeedbackButton({ label, className }: Props) {
@@ -14,11 +14,11 @@ export default function OpenFeedbackButton({ label, className }: Props) {
   return (
     <>
       <button
-  onClick={() => setOpen(true)}
-  className={className}
-  aria-label={label}
->
-
+        type="button" 
+        onClick={() => setOpen(true)}
+        className={`min-h-[48px] ${className || ""}`} 
+        aria-label={label}
+      >
         {label}
       </button>
 

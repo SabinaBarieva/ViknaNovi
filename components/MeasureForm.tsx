@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { IMaskInput } from "react-imask";
 import { Turnstile } from "@marsidev/react-turnstile";
+import Image from "next/image"; 
 
 import SuccessModal from "./SuccessModal";
 import { trackLead } from "@/lib/trackLead";
@@ -46,7 +47,7 @@ export default function MeasureForm() {
     if (!validate()) return;
 
     if (!token) {
-      alert("Подтвердите, что вы не робот");
+      alert("Підтвердіть, що ви не робот");
       return;
     }
 
@@ -92,11 +93,16 @@ export default function MeasureForm() {
   return (
     <>
       <section className="container pt-[40px]">
-        <div className="relative h-[704px] sm:h-[390px] overflow-hidden bg-cover">
-          <img
-            src="/measure-bg.jpg"
-            alt="Фонове зображення заміру вікон"
-            className="absolute inset-0 w-full h-full object-cover"
+        <div className="relative h-[704px] sm:h-[390px] overflow-hidden rounded shadow-sm bg-black">
+
+          <Image
+            src="/measure-bg.webp" 
+
+            alt="Measure background"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+            className="object-cover"
+            loading="lazy"
           />
 
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/70"></div>
@@ -145,6 +151,8 @@ export default function MeasureForm() {
                 {/* PHONE */}
                 <div className="w-full md:w-[220px]">
                   <IMaskInput
+                    type="tel"
+                    inputMode="tel"
                     mask="+38 (000) 000-00-00"
                     lazy={false}
                     value={form.phone}
@@ -197,7 +205,7 @@ export default function MeasureForm() {
                     bg-primary hover:bg-accent text-white
                     font-opensans font-normal text-[20px] uppercase
                     tracking-normal leading-[100%] text-center
-                    transition
+                    transition rounded-sm shadow-sm
                   "
                 >
                   {sending ? t("sending") : t("btn")}
@@ -208,7 +216,7 @@ export default function MeasureForm() {
             {/* CHECKBOX */}
             <label
               htmlFor="agree"
-              className="flex items-start gap-2 font-opensans font-normal text-white text-[14px] mt-6 text-left"
+              className="flex items-start gap-2 font-opensans font-normal text-white text-[14px] mt-6 text-left cursor-pointer select-none"
             >
               <input
                 type="checkbox"
@@ -220,6 +228,7 @@ export default function MeasureForm() {
                   setForm({ ...form, agree: e.target.checked });
                   setErrors({ ...errors, agree: "" });
                 }}
+                className="mt-1"
               />
               <span className="leading-tight">{t("agree")}</span>
             </label>

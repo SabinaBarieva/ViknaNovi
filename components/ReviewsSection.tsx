@@ -57,23 +57,26 @@ export default function ReviewsSection() {
             <span className="font-semibold shrink-0">
               {page + 1}/{totalPages}
             </span>
-            <div className="hidden md:flex items-end gap-3 ml-auto">
+            <div className="hidden md:flex items-center gap-2 ml-auto">
+
               <button
+                type="button"
                 onClick={prev}
                 disabled={isFirst}
                 aria-label="Назад"
-                className={`text-[20px] transition ${
-                  isFirst ? "opacity-30 cursor-not-allowed" : "hover:text-accent"
+                className={`w-11 h-11 flex items-center justify-center text-[24px] border border-borderGray rounded transition ${
+                  isFirst ? "opacity-30 cursor-not-allowed" : "hover:bg-secondary/5"
                 }`}
               >
                 &larr;
               </button>
               <button
+                type="button"
                 onClick={next}
                 disabled={isLast}
                 aria-label="Вперёд"
-                className={`text-[20px] transition ${
-                  isLast ? "opacity-30 cursor-not-allowed" : "hover:text-accent"
+                className={`w-11 h-11 flex items-center justify-center text-[24px] border border-borderGray rounded transition ${
+                  isLast ? "opacity-30 cursor-not-allowed" : "hover:bg-secondary/5"
                 }`}
               >
                 &rarr;
@@ -97,19 +100,22 @@ export default function ReviewsSection() {
       <div className="relative w-full overflow-hidden">
         {!isDesktop && (
           <>
+
             <button
+              type="button"
               onClick={prev}
               disabled={isFirst}
               aria-label="Назад"
-              className="absolute left-2 top-1/2 -translate-y-1/2 z-10  w-10 h-10 bg-white/80 text-blue-700 hover:bg-white rounded-md shadow-md disabled:opacity-30"
+              className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white/90 text-blue-700 hover:bg-white rounded-md shadow-md disabled:opacity-30 flex items-center justify-center font-bold text-lg"
             >
               &lt;
             </button>
             <button
+              type="button"
               onClick={next}
               disabled={isLast}
               aria-label="Вперёд"
-              className="absolute right-2 top-1/2 -translate-y-1/2 z-10  w-10 h-10 bg-white/80 text-blue-700 hover:bg-white rounded-md shadow-md disabled:opacity-30"
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white/90 text-blue-700 hover:bg-white rounded-md shadow-md disabled:opacity-30 flex items-center justify-center font-bold text-lg"
             >
               &gt;
             </button>
@@ -150,27 +156,33 @@ function ReviewCard({
   const isOpen = expanded === index;
 
   return (
-    <div className="bg-white p-5 min-w-full md:min-w-[300px] max-w-[300px]">
-      <AnimatePresence mode="wait">
-        <motion.p
-          className="text-[16px] mb-4 font-opensans font-normal"
-          key={isOpen ? "full" : "short"}
-        >
-          {isOpen ? item.full : item.short}
-        </motion.p>
-      </AnimatePresence>
+    <div className="bg-white p-5 min-w-full md:min-w-[300px] max-w-[300px] flex flex-col justify-between">
+      <div>
+        <AnimatePresence mode="wait">
+          <motion.p
+            className="text-[16px] mb-4 font-opensans font-normal leading-relaxed"
+            key={isOpen ? "full" : "short"}
+          >
+            {isOpen ? item.full : item.short}
+          </motion.p>
+        </AnimatePresence>
 
-      <button
-        onClick={() => setExpanded(isOpen ? null : index)}
-        className="flex items-center gap-1 text-primary uppercase font-mont font-semibold text-[16px]"
-      >
-        {isOpen ? t("collapse") : t("expand")}
-        <span className="text-[16px]">{isOpen ? "↘" : "↗"}</span>
-      </button>
+        <div className="flex mt-1 mb-2">
 
-      <div className="mt-4">
-        <p className="text-[13px] font-opensans text-black">{item.name}</p>
-        <p className="text-[12px] font-opensans text-gray-500">{item.status}</p>
+          <button
+            type="button"
+            onClick={() => setExpanded(isOpen ? null : index)}
+            className="flex items-center gap-1 text-primary uppercase font-mont font-semibold text-[16px] py-3 -my-3 transition hover:opacity-80 cursor-pointer"
+          >
+            {isOpen ? t("collapse") : t("expand")}
+            <span className="text-[16px]">{isOpen ? "↘" : "↗"}</span>
+          </button>
+        </div>
+      </div>
+
+      <div className="mt-4 pt-2 border-t border-gray-100/50">
+        <p className="text-[13px] font-opensans font-semibold text-black">{item.name}</p>
+        <p className="text-[12px] font-opensans text-gray-500 mt-0.5">{item.status}</p>
       </div>
     </div>
   );

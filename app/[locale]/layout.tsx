@@ -4,14 +4,30 @@ import '../globals.css';
 import Footer from '@/components/Footer';
 import { Montserrat, Open_Sans } from "next/font/google";
 import Script from 'next/script';
+import { Metadata } from 'next';
 
-export const metadata = {
-  title: 'ViknaNovі',
-  description: 'Металопластикові вікна та двері',
-  icons: {
-    icon: '/favicon.ico',
-  },
-};
+export async function generateMetadata({ params }: any): Promise<Metadata> {
+  const locale = (await params)?.locale || 'uk';
+  const baseUrl = 'https://www.viknanovi.shop';
+  
+  const canonicalUrl = locale === 'uk' ? baseUrl : `${baseUrl}/${locale}`;
+  const isRu = locale === 'ru';
+
+  return {
+    title: isRu ? 'ViknaNovі | Пластиковые окна и двери' : 'ViknaNovі | Металопластикові вікна та двері',
+    description: isRu ? 'Продажа и монтаж металлопластиковых окон и дверей' : 'Металопластикові вікна та двері — продаж і монтаж',
+    icons: {
+      icon: '/favicon.ico',
+    },
+    alternates: {
+      canonical: canonicalUrl,
+      languages: {
+        'uk': baseUrl,
+        'ru': `${baseUrl}/ru`,
+      },
+    },
+  };
+}
 
 const montserrat = Montserrat({
   subsets: ["latin", "cyrillic"],
@@ -51,11 +67,7 @@ export default async function LocaleLayout({ children, params }: any) {
             `,
           }}
         />
-      </head>
 
-      <body className="flex flex-col min-h-screen relative">
-
-        {/* ✅ Google Tag Manager (noscript) */}
         <noscript>
           <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-NP73DF68"
@@ -64,7 +76,27 @@ export default async function LocaleLayout({ children, params }: any) {
             style={{ display: 'none', visibility: 'hidden' }}
           />
         </noscript>
+        <Script
+          id="meta-pixel"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              !function(f,b,e,v,n,t,s)
+              {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+              n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+              if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+              n.queue=[];t=b.createElement(e);t.async=!0;
+              t.src=v;s=b.getElementsByTagName(e)[0];
+              s.parentNode.insertBefore(t,s)}(window, document,'script',
+              'https://facebook.net');
+              fbq('init', 'ВАШ_ID_ПИКСЕЛЯ'); // <-- Не забудьте заменить на реальный ID из Ads Manager
+              fbq('track', 'PageView');
+            `,
+          }}
+        />
+      </head>
 
+      <body className="flex flex-col min-h-screen relative">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Header />
 

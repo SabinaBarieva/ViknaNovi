@@ -6,9 +6,17 @@ export default async function SaleSliderServer({
 }: {
   lang: 'uk' | 'ru';
 }) {
-  const blocks = await sanityClient.fetch(`
-    *[_type == "heroBlock"] | order(_createdAt asc)
-  `);
+
+  const blocks = await sanityClient.fetch(
+    `*[_type == "heroBlock"] | order(_createdAt asc)`,
+    {},
+    {
+      next: { 
+        revalidate: 3600, 
+        tags: ['heroBlock'] 
+      }
+    }
+  );
 
   const slides = blocks.flatMap((block: any) => block.slides || []);
 

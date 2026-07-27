@@ -34,7 +34,8 @@ export default function StepsSection() {
                   {step.title}
                 </h3>
 
-                <p className="text-[14px] lg:text-[16px] leading-[1] text-secondary font-opensans font-normal">
+                {/* ✅ ИСПРАВЛЕНО: leading-[1] заменено на leading-relaxed для свободного и красивого переноса строк на мобильных экранах */}
+                <p className="text-[14px] lg:text-[16px] leading-relaxed text-secondary font-opensans font-normal">
                   {step.desc}
                 </p>
               </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { IMaskInput } from "react-imask";
 import { useTranslations } from "next-intl";
@@ -47,9 +47,39 @@ export default function PromoModal() {
 
   useEffect(() => setMounted(true), []);
 
+
   useEffect(() => {
-    const timer = setTimeout(() => setOpen(true), 800);
-    return () => clearTimeout(timer);
+
+    if (typeof window !== "undefined" && sessionStorage.getItem("promo_shown")) {
+      return;
+    }
+
+    const showModal = () => {
+      setOpen(true);
+      setStartedAt(Date.now()); 
+      sessionStorage.setItem("promo_shown", "true");
+      window.removeEventListener("scroll", handleScroll);
+      clearTimeout(timeTimer);
+    };
+
+
+    const handleScroll = () => {
+      const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+      if (scrollPercent > 40) {
+        showModal();
+      }
+    };
+
+    const timeTimer = setTimeout(() => {
+      showModal();
+    }, 15000);
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      clearTimeout(timeTimer);
+    };
   }, []);
 
   if (!open || !mounted) return null;
@@ -74,7 +104,7 @@ export default function PromoModal() {
     if (!validate()) return;
 
     if (!token) {
-      alert("Подтвердите, что вы не робот");
+      alert("Підтвердіть, що ви не робот");
       return;
     }
 
@@ -149,12 +179,14 @@ export default function PromoModal() {
       : null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm animate-fadeIn">
       <div className="relative w-full max-w-sm overflow-hidden rounded-2xl bg-[#0B0F1A] p-6 text-white shadow-xl">
-        {/* CLOSE */}
+
         <button
+          type="button"
           onClick={() => setOpen(false)}
-          className="text-[30px] absolute right-2 top-0 z-20 text-white/60 hover:text-white"
+          className="w-11 h-11 flex items-center justify-center text-[30px] absolute right-1 top-1 z-20 text-white/60 hover:text-white transition cursor-pointer"
+          aria-label="Закрыть подарок"
         >
           ✕
         </button>
@@ -165,7 +197,7 @@ export default function PromoModal() {
           alt=""
           width={160}
           height={160}
-          className="absolute right-0 top-0 z-10"
+          className="absolute right-0 top-0 z-10 pointer-events-none"
         />
 
         <Image
@@ -173,20 +205,20 @@ export default function PromoModal() {
           alt=""
           width={160}
           height={160}
-          className="absolute bottom-0 left-0 z-10"
+          className="absolute bottom-0 left-0 z-10 pointer-events-none"
         />
 
         {/* GIFT */}
         <div className="relative z-20 mb-4 flex justify-center">
           <Image
             src="/promomodal/priz.webp"
-            alt=""
+            alt="Подарочный купон 500 грн"
             width={90}
             height={90}
           />
         </div>
 
-        <h2 className="relative z-20 mb-6 text-center text-xl font-bold">
+        <h2 className="relative z-20 mb-6 text-center text-xl font-bold font-mont">
           {t("title")}{" "}
           <span className="text-cyan-400">500 грн</span>
           <br />
@@ -202,14 +234,16 @@ export default function PromoModal() {
           <div>
             <input
               name="city"
+              type="text"
               value={form.city}
               onChange={handleChange}
               placeholder={t("city")}
-              className="w-full rounded-lg bg-black/40 border border-white/10 px-4 py-3"
+              className="w-full rounded-lg bg-black/40 border border-white/10 px-4 py-3 text-[16px] font-opensans"
+              required
             />
 
             {errors.city && (
-              <p className="text-red-400 text-sm">
+              <p className="text-red-400 text-sm mt-1">
                 {errors.city}
               </p>
             )}
@@ -219,14 +253,16 @@ export default function PromoModal() {
           <div>
             <input
               name="name"
+              type="text"
               value={form.name}
               onChange={handleChange}
               placeholder={t("name")}
-              className="w-full rounded-lg bg-black/40 border border-white/10 px-4 py-3"
+              className="w-full rounded-lg bg-black/40 border border-white/10 px-4 py-3 text-[16px] font-opensans"
+              required
             />
 
             {errors.name && (
-              <p className="text-red-400 text-sm">
+              <p className="text-red-400 text-sm mt-1">
                 {errors.name}
               </p>
             )}
@@ -235,6 +271,9 @@ export default function PromoModal() {
           {/* PHONE */}
           <div>
             <IMaskInput
+
+              type="tel"
+              inputMode="tel"
               mask="+38 (000) 000-00-00"
               name="phone"
               value={form.phone}
@@ -250,11 +289,12 @@ export default function PromoModal() {
                 });
               }}
               placeholder={t("phone")}
-              className="w-full rounded-lg bg-black/40 border border-white/10 px-4 py-3"
+              className="w-full rounded-lg bg-black/40 border border-white/10 px-4 py-3 text-[16px] font-opensans"
+              required
             />
 
             {errors.phone && (
-              <p className="text-red-400 text-sm">
+              <p className="text-red-400 text-sm mt-1">
                 {errors.phone}
               </p>
             )}
@@ -281,7 +321,7 @@ export default function PromoModal() {
           <button
             type="submit"
             disabled={sending}
-            className="w-full rounded-xl bg-gradient-to-r from-cyan-400 to-blue-600 py-3 font-semibold text-black"
+            className="w-full rounded-xl bg-gradient-to-r from-cyan-400 to-blue-600 py-3 font-semibold text-black uppercase tracking-wider text-[15px] font-mont transition hover:opacity-95"
           >
             {sending ? t("sending") : t("submit")}
           </button>

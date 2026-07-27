@@ -149,8 +149,10 @@ export default function FeedbackModal({ open, onClose }: Props) {
     <div className="fixed inset-0 z-50 flex justify-center items-center bg-black/40 backdrop-blur-sm">
       <div className="w-[360px] bg-primary text-white p-6 relative animate-fadeIn">
         <button
+          type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 text-white text-3xl"
+          className="absolute right-4 top-4 text-white text-3xl hover:opacity-80 transition w-8 h-8 flex items-center justify-center"
+          aria-label="Закрыть окно"
         >
           ×
         </button>
@@ -165,13 +167,17 @@ export default function FeedbackModal({ open, onClose }: Props) {
         >
           <input
             name="name"
+            type="text"
             value={form.name}
             onChange={handleChange}
             placeholder={t("name")}
-            className="w-full bg-transparent border border-white/50 px-3 py-2"
+            className="w-full bg-transparent border border-white/50 px-3 py-2 text-[16px] font-opensans"
+            required
           />
 
           <IMaskInput
+            type="tel"
+            inputMode="tel"
             mask="+38 (000) 000-00-00"
             name="phone"
             value={form.phone}
@@ -180,7 +186,8 @@ export default function FeedbackModal({ open, onClose }: Props) {
               setErrors({ ...errors, phone: "" });
             }}
             placeholder={t("phone")}
-            className="w-full bg-transparent border border-white/50 px-3 py-2"
+            className="w-full bg-transparent border border-white/50 px-3 py-2 text-[16px] font-opensans"
+            required
           />
 
           <textarea
@@ -189,7 +196,7 @@ export default function FeedbackModal({ open, onClose }: Props) {
             onChange={handleChange}
             placeholder={t("message")}
             rows={4}
-            className="w-full bg-transparent border border-white/50 px-3 py-2"
+            className="w-full bg-transparent border border-white/50 px-3 py-2 text-[16px] font-opensans resize-none"
           />
 
           {/* 🕳 Honeypot */}
@@ -212,17 +219,19 @@ export default function FeedbackModal({ open, onClose }: Props) {
           <button
             type="submit"
             disabled={sending}
-            className="w-full bg-white text-secondary py-3"
+            className="w-full bg-white text-secondary py-3 uppercase font-montserrat font-semibold text-[16px] hover:bg-opacity-95 transition"
           >
             {sending ? t("sending") : t("submit")}
           </button>
 
-          <label className="flex gap-2 text-[14px]">
+          <label className="flex gap-2 text-[14px] items-start font-opensans cursor-pointer select-none">
             <input
               type="checkbox"
               name="agree"
               checked={form.agree}
               onChange={handleChange}
+              className="mt-1"
+              required
             />
             <span>{t("policy")}</span>
           </label>

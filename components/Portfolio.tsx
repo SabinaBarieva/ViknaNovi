@@ -38,7 +38,7 @@ export default function Portfolio() {
 
   const progress = ((page + 1) / totalItems) * 100;
 
-  // свайп
+  
   const onTouchStart = (e: React.TouchEvent) => {
     startX.current = e.touches[0].clientX;
   };
@@ -53,7 +53,6 @@ export default function Portfolio() {
     <section className="container pt-[40px]">
       <div className="w-full mx-auto">
 
-        {/* HEADER */}
         <div className="w-full grid md:flex md:justify-between mb-6">
           <div>
             <h2 className="title">{t("title")}</h2>
@@ -66,9 +65,9 @@ export default function Portfolio() {
                 {page + 1}/{totalItems}
               </span>
 
-              <div className="hidden md:flex gap-3 ml-auto">
-                <button onClick={prev} disabled={page === 0} className="text-[20px] disabled:opacity-30">&larr;</button>
-                <button onClick={next} disabled={page === totalItems - 1} className="text-[20px] disabled:opacity-30">&rarr;</button>
+              <div className="hidden md:flex gap-1 ml-auto">
+                <button type="button" onClick={prev} disabled={page === 0} className="text-[24px] w-11 h-11 flex items-center justify-center disabled:opacity-30 hover:opacity-80 transition" aria-label="Предыдущий слайд">&larr;</button>
+                <button type="button" onClick={next} disabled={page === totalItems - 1} className="text-[24px] w-11 h-11 flex items-center justify-center disabled:opacity-30 hover:opacity-80 transition" aria-label="Следующий слайд">&rarr;</button>
               </div>
             </div>
 
@@ -88,12 +87,12 @@ export default function Portfolio() {
         <div className="relative overflow-hidden">
           {!isDesktop && (
             <>
-              <button onClick={prev} disabled={page === 0}
-                className="absolute left-2 top-1/2 -translate-y-1/2 z-10   w-10 h-10 bg-white/80 text-blue-700 hover:bg-white disabled:opacity-30">
+              <button type="button" onClick={prev} disabled={page === 0}
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white/80 text-blue-700 hover:bg-white flex items-center justify-center text-xl font-bold disabled:opacity-30 rounded-sm" aria-label="Назад">
                 &lt;
               </button>
-              <button onClick={next} disabled={page === totalItems - 1}
-                className="absolute right-2 top-1/2 -translate-y-1/2 z-10  w-10 h-10 bg-white/80 text-blue-700 hover:bg-white disabled:opacity-30">
+              <button type="button" onClick={next} disabled={page === totalItems - 1}
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white/80 text-blue-700 hover:bg-white flex items-center justify-center text-xl font-bold disabled:opacity-30 rounded-sm" aria-label="Вперед">
                 &gt;
               </button>
             </>

@@ -55,11 +55,14 @@ export default function ProfileSystems() {
           <p className="mb-6 font-semibold font-mont text-[18px] uppercase text-primary">
             {t("segment")}
           </p>
-          <div className="flex flex-col gap-2 mb-5">
+          <div className="flex flex-col gap-1 mb-5">
             {ALL_SEGMENTS.map((s) => (
-              <label key={s} className="flex gap-2 text-[16px] font-opensans text-secondary">
+
+              <label key={s} className="flex gap-2 text-[16px] font-opensans text-secondary items-center py-1.5 cursor-pointer select-none">
                 <input
                   type="checkbox"
+
+                  className="w-4 h-4 cursor-pointer"
                   checked={segments.includes(s)}
                   onChange={() => toggleSegment(s)}
                 />
@@ -71,11 +74,12 @@ export default function ProfileSystems() {
           <p className="mb-2 font-semibold font-mont text-[18px] uppercase text-primary">
             {t("brand")}
           </p>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1">
             {ALL_BRANDS.map((b) => (
-              <label key={b} className="flex gap-2 text-[16px] font-opensans text-secondary uppercase">
+              <label key={b} className="flex gap-2 text-[16px] font-opensans text-secondary uppercase items-center py-1.5 cursor-pointer select-none">
                 <input
                   type="checkbox"
+                  className="w-4 h-4 cursor-pointer"
                   checked={brands.includes(b)}
                   onChange={() => toggleBrand(b)}
                 />
@@ -113,11 +117,19 @@ export default function ProfileSystems() {
             ))}
           </Swiper>
 
-          {/* СТРЕЛКИ */}
-          <button className="profiles-prev absolute top-[200px] -translate-y-1/2 left-2 z-10 w-10 h-10 bg-white/80 text-blue-700 hover:bg-white disabled:opacity-30">
+
+          <button 
+            type="button" 
+            className="profiles-prev absolute top-[200px] -translate-y-1/2 left-2 z-10 w-12 h-12 bg-white/80 text-blue-700 hover:bg-white disabled:opacity-30 flex items-center justify-center text-xl font-bold rounded-sm shadow-sm"
+            aria-label="Предыдущие профили"
+          >
             &lt;
           </button>
-          <button className="profiles-next absolute top-[200px] -translate-y-1/2 right-2 z-10 w-10 h-10 bg-white/80 text-blue-700 hover:bg-white disabled:opacity-30">
+          <button 
+            type="button" 
+            className="profiles-next absolute top-[200px] -translate-y-1/2 right-2 z-10 w-12 h-12 bg-white/80 text-blue-700 hover:bg-white disabled:opacity-30 flex items-center justify-center text-xl font-bold rounded-sm shadow-sm"
+            aria-label="Следующие профили"
+          >
             &gt;
           </button>
         </div>

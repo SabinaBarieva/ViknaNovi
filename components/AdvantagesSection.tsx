@@ -15,14 +15,13 @@ export default function AdvantagesSection() {
           {t("title")}
         </h2>
 
-        {/* GRID */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-6 lg:gap-8">
           {items.map((item, i) => (
-            <div key={`advantage-${i}`}>
+            <div key={`advantage-${i}`} className="flex flex-col">
               <h3 className="text-[22px] sm:text-[17px] lg:text-[21px] font-semibold mb-2 uppercase text-primary font-mont">
                 {item.title}
               </h3>
-              <p className="text-[14px] leading-[1] md:text-[16px] font-normal font-opensans text-secondary">
+              <p className="text-[15px] leading-relaxed md:text-[16px] font-normal font-opensans text-secondary">
                 {item.text}
               </p>
             </div>
@@ -30,9 +29,6 @@ export default function AdvantagesSection() {
         </div>
 
       </div>
-
-
-     
     </section>
   );
 }

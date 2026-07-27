@@ -17,32 +17,28 @@ export default function FurnituraSection() {
     <section className="container py-10 md:py-14">
       <div className="max-w-7xl mx-auto">
 
-        {/* Title */}
         <h2 className="title mb-6 pl-2">
           {t("title")}
         </h2>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-2">
           {brands.map((item) => (
             <div
               key={item.id}
-              className="bg-[#FAFAFA] h-[128px] flex items-center justify-center"
+              className="bg-[#FAFAFA] h-[100px] sm:h-[128px] flex items-center justify-center rounded p-2"
             >
               <Image
                 src={item.img}
-                alt={`Фурнітура ${item.name}`}
+                alt={`Logo ${item.name}`}
                 width={130}
                 height={60}
-                className="object-contain max-h-[60px]"
+                className="object-contain max-h-[50px] sm:max-h-[60px]"
                 loading="lazy"
               />
             </div>
           ))}
         </div>
       </div>
-
-
     </section>
   );
 }

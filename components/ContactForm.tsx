@@ -171,8 +171,10 @@ export default function FeedbackForm() {
             {t("desc")}
           </p>
           <div className="text-secondary font-opensans text-[16px]">
-            <p>Телефон: +38 (067) 400-02-02</p>
-            <p>Email: vn.callcenter@viknanovi.ua</p>
+            <p>Адрес шоурума: Днепр, пр. Богдана Хмельницкого, 222В</p>
+            <p>Телефон: <a href="tel:+380674000202" className="hover:underline">+38 (067) 400-02-02</a></p>
+            <p>Email: <a href="mailto:vn.callcenter@viknanovi.ua" className="hover:underline">vn.callcenter@viknanovi.ua</a></p>
+            
           </div>
         </div>
 
@@ -194,6 +196,8 @@ export default function FeedbackForm() {
           />
 
           <IMaskInput
+            type="tel"
+            inputMode="tel"
             mask="+38 (000) 000-00-00"
             value={form.phone}
             onAccept={(value: any) => {

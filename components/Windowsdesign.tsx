@@ -15,26 +15,30 @@ export default function WindowDesigner() {
   const standardColors = WINDOW_COLORS.filter(c => c.type === 'standard');
   const nonStandardColors = WINDOW_COLORS.filter(c => c.type === 'nonstandard');
 
+  const isRu = locale === 'ru';
+
   return (
-    <section className="container pt-[40px]">
+    <section className="container pt-[40px]" id="designer">
       <h2 className="title">{t('title')}</h2>
 
       <p className="font-opensans text-[16px] text-secondary mb-6">
         {t('chooseStyle')}
       </p>
 
-      <div className="grid md:flex gap-10 relative overflow-hidden md:justify-between bg-cover p-5 lg:p-10">
+      <div className="grid md:flex gap-10 relative overflow-hidden md:justify-between bg-cover p-5 lg:p-10 rounded">
         <Image
           src="/windowsection.png"
           fill
-          alt="Дизайн пластикового вікна"
+          // ✅ ИСПРАВЛЕНО: Текст alt теперь переключается в зависимости от языка для идеального SEO (Пункт 12)
+          alt={isRu ? "Дизайн пластикового окна" : "Дизайн пластикового вікна"}
           className="absolute inset-0 w-full h-full object-cover"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
           loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/70"></div>
 
         {/* ФИЛЬТРЫ */}
-        <aside className="w-full h-max md:w-[320px] z-10 bg-white p-5 flex flex-col gap-8">
+        <aside className="w-full h-max md:w-[320px] z-10 bg-white p-5 flex flex-col gap-8 rounded shadow-sm">
           <h3 className="font-mont text-primary font-semibold text-[24px] uppercase">
             {t('filters')}
           </h3>
@@ -86,10 +90,11 @@ export default function WindowDesigner() {
             width={520}
             height={520}
             loading="lazy"
-            className="object-contain drop-shadow-xl"
+            className="object-contain drop-shadow-xl max-h-[350px] md:max-h-[520px]"
+            sizes="(max-width: 768px) 100vw, 520px"
           />
 
-          <div className="w-full mt-4 px-6 py-3 bg-white font-mont text-primary font-semibold text-[24px] text-center uppercase">
+          <div className="w-full mt-4 px-6 py-3 bg-white font-mont text-primary font-semibold text-[20px] md:text-[24px] text-center uppercase shadow-sm rounded-sm">
             {selected.name[locale]}
           </div>
         </div>
@@ -116,32 +121,36 @@ function ColorButton({
   const isActive = selected.key === color.key;
 
   return (
+    // ✅ ИСПРАВЛЕНО: Изменены размеры с w-10 h-10 на w-11 h-11 (44px) для беспрепятственного мобильного клика по стандартам Google.
+    // ✅ Добавлен явный type="button" и динамический aria-label для доступности роботам (Пункт 15)
     <button
+      type="button"
       onClick={() => onSelect(color)}
-      className={`relative w-10 h-10 rounded-full border transition ${
-        isActive ? 'border-blue-600 scale-110' : 'border-gray-300'
+      className={`relative w-11 h-11 rounded-full border transition flex items-center justify-center cursor-pointer ${
+        isActive ? 'border-blue-600 scale-105 shadow-sm' : 'border-gray-300 hover:border-gray-400'
       }`}
       title={color.name[locale]}
+      aria-label={`${locale === 'uk' ? 'Обрати колір' : 'Выбрать цвет'} ${color.name[locale]}`}
     >
       <Image
         src={color.texture}
-        alt={color.name[locale]}
-        width={40}
-        height={40}
-        className="rounded-full object-cover"
+        alt="" // alt оставляем пустым, так как кнопка уже снабжена подробным aria-label
+        width={38}
+        height={38}
+        className="rounded-full object-cover w-[38px] h-[38px]"
         loading="lazy"
       />
 
       {isActive && (
-        <span className="absolute inset-0 flex items-center justify-center">
+        <span className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-full">
           <svg
-            className="w-5 h-5 text-white"
+            className="w-5 h-5 text-white drop-shadow"
             fill="none"
             stroke="white"
             strokeWidth="3"
             viewBox="0 0 24 24"
           >
-            <path d="M5 13l4 4L19 7" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
         </span>
       )}

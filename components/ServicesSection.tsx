@@ -33,13 +33,14 @@ export default function Services() {
             <div key={item.id} className="relative h-[320px] bg-white overflow-hidden group">
               <Image src={item.img} alt={item.title} fill className="object-cover opacity-0 group-hover:opacity-80 transition-opacity duration-500" />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-40 transition-opacity duration-500"></div>
-            <div className="absolute inset-0 group-hover:bg-black/50 transition"></div>
+              <div className="absolute inset-0 group-hover:bg-black/50 transition"></div>
               <div className="absolute inset-0 px-[1rem] flex flex-col py-[4rem] gap-5 justify-between text-white">
                 <Image src={item.number} alt={item.title} width={60} height={50} loading="lazy" className="z-50 h-[40px]" />
                 <h3 className="xl:text-[24px] lg:text-[20px] font-mont text-primary font-semibold uppercase group-hover:text-white transition-colors">
                   {item.title}
                 </h3>
-                <p className="text-[16px] font-opensans mt-1 leading-none">{item.desc}</p>
+                {/* ✅ ИСПРАВЛЕНО: leading-none заменено на leading-normal для предотвращения наложения многострочного текста */}
+                <p className="text-[16px] font-opensans mt-1 leading-normal">{item.desc}</p>
               </div>
             </div>
           ))}
@@ -67,7 +68,8 @@ export default function Services() {
                   <div className="absolute inset-0 pl-[60px] py-16 flex flex-col gap-5 justify-between text-white">
                     <Image src={item.number} alt={item.title} width={60} height={50} loading="lazy" className="h-[40px]" />
                     <h3 className="font-mont text-white font-semibold uppercase text-[22px]">{item.title}</h3>
-                    <p className="text-[14px] font-opensans leading-none">{item.desc}</p>
+                    {/* ✅ ИСПРАВЛЕНО: leading-none заменено на leading-normal для мобильной версии */}
+                    <p className="text-[14px] font-opensans leading-normal">{item.desc}</p>
                   </div>
                 </div>
               </SwiperSlide>
@@ -75,8 +77,21 @@ export default function Services() {
           </Swiper>
 
           {/* СТРЕЛКИ В СЕРЕДИНЕ */}
-          <button className="services-prev absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/80 text-blue-700 hover:bg-white disabled:opacity-30">&lt;</button>
-          <button className="services-next absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/80 text-blue-700 hover:bg-white disabled:opacity-30">&gt;</button>
+          {/* ✅ ИСПРАВЛЕНО: Кнопкам добавлен тип button, размеры изменены с w-10 h-10 на w-12 h-12 (48px), добавлен aria-label (Пункт 15) */}
+          <button 
+            type="button"
+            className="services-prev absolute left-2 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white/80 text-blue-700 hover:bg-white disabled:opacity-30 flex items-center justify-center font-bold text-lg rounded-sm shadow-sm"
+            aria-label="Предыдущая услуга"
+          >
+            &lt;
+          </button>
+          <button 
+            type="button"
+            className="services-next absolute right-2 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white/80 text-blue-700 hover:bg-white disabled:opacity-30 flex items-center justify-center font-bold text-lg rounded-sm shadow-sm"
+            aria-label="Следующая услуга"
+          >
+            &gt;
+          </button>
         </div>
 
         <style jsx>{`

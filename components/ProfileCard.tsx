@@ -53,18 +53,17 @@ export default function ProfileCard({ profile, locale }: Props) {
         <span>{profile.code}</span>
       </p>
 
-      {/* COLLAPSED VIEW — 3 PARAMS */}
       {!open && (
         <div className="text-[16px] text-secondary font-opensans font-normal flex flex-col gap-1">
           <Row label={t("frameChambers")} value={profile.params.frameChambers} />
           <Row label={t("mountDepthMm")} value={profile.params.mountDepthMm} />
           <Row label={t("glassWidthMm")} value={profile.params.glassWidthMm} />
 
-          {/* BUTTON */}
-          <div className="flex justify-end mt-4">
+          <div className="flex justify-end mt-1">
             <button
+              type="button" 
               onClick={() => setOpen(true)}
-              className="flex items-center gap-1 text-primary uppercase font-mont font-semibold text-[16px]"
+              className="flex items-center gap-1 text-primary uppercase font-mont font-semibold text-[16px] py-3 -my-3 hover:opacity-80 transition cursor-pointer"
             >
               {locale === "uk" ? "Розгорнути" : "Развернуть"}{" "}
               <span className="text-[16px]">↘</span>
@@ -72,11 +71,8 @@ export default function ProfileCard({ profile, locale }: Props) {
           </div>
         </div>
       )}
-
-      {/* EXPANDED VIEW */}
       {open && (
-                <div className="text-[16px] text-secondary font-opensans font-normal flex flex-col gap-1">
-
+        <div className="text-[16px] text-secondary font-opensans font-normal flex flex-col gap-1">
           <Row label={t("frameChambers")} value={profile.params.frameChambers} />
           <Row label={t("sashChambers")} value={profile.params.sashChambers} />
           <Row label={t("mountDepthMm")} value={profile.params.mountDepthMm} />
@@ -92,11 +88,12 @@ export default function ProfileCard({ profile, locale }: Props) {
             value={profile.lamination ? tb("yes") : tb("no")}
           />
 
-          {/* COLLAPSE BUTTON */}
-          <div className="flex justify-end mt-3">
+
+          <div className="flex justify-end mt-2">
             <button
+              type="button" 
               onClick={() => setOpen(false)}
-              className="flex items-center gap-1 text-primary font-mont font-semibold text-[16px] uppercase hover:underline"
+              className="flex items-center gap-1 text-primary font-mont font-semibold text-[16px] uppercase py-3 -my-3 hover:underline cursor-pointer"
             >
               {locale === "uk" ? "Згорнути" : "Свернуть"}{" "}
               <span className="text-[16px]">↗</span>

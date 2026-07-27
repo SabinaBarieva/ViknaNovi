@@ -5,7 +5,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
+      disallow: ['/api/', '/_next/'], 
     },
-    sitemap: 'https://viknanovi.shop/sitemap.xml',
+    sitemap: 'https://www.viknanovi.shop/sitemap.xml',
   };
 }
