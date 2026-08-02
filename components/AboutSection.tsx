@@ -43,7 +43,7 @@ export default function AboutSection() {
 <div className="w-full aspect-video overflow-hidden rounded-md shadow-sm">
   <YouTubeEmbed 
     videoid="MtywbdmLF1w" 
-
+    style="background-image: url('https://ytimg.com'); background-size: cover; background-position: center;"
     params="controls=1&loop=0"
   />
 </div>

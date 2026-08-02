@@ -269,36 +269,38 @@ export default function PromoModal() {
           </div>
 
           {/* PHONE */}
-          <div>
-            <IMaskInput
+ {/* PHONE */}
+<div>
+  <IMaskInput
+    type="tel"
+    inputMode="tel"
+    mask="+38 (000) 000-00-00"
+    name="phone"
+    value={form.phone}
 
-              type="tel"
-              inputMode="tel"
-              mask="+38 (000) 000-00-00"
-              name="phone"
-              value={form.phone}
-              onAccept={(value: any) => {
-                setForm({
-                  ...form,
-                  phone: value,
-                });
+    onAccept={(value: string, mask: any) => {
+      setForm({
+        ...form,
+        phone: mask.value, 
+      });
 
-                setErrors({
-                  ...errors,
-                  phone: "",
-                });
-              }}
-              placeholder={t("phone")}
-              className="w-full rounded-lg bg-black/40 border border-white/10 px-4 py-3 text-[16px] font-opensans"
-              required
-            />
+      setErrors({
+        ...errors,
+        phone: "",
+      });
+    }}
+    placeholder={t("phone")}
+    className="w-full rounded-lg bg-black/40 border border-white/10 px-4 py-3 text-[16px] font-opensans"
+    required
+  />
 
-            {errors.phone && (
-              <p className="text-red-400 text-sm mt-1">
-                {errors.phone}
-              </p>
-            )}
-          </div>
+  {errors.phone && (
+    <p className="text-red-400 text-sm mt-1">
+      {errors.phone}
+    </p>
+  )}
+</div>
+
 
           {/* 🕳 Honeypot */}
           <input

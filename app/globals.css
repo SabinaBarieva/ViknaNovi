@@ -2,55 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --site-bg: #EDEEEF;
+  --color-primary: #1A32AF;
+}
+
+html, body {
+  background-color: var(--site-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
 .title {
   font-family: 'Montserrat', sans-serif;
-  font-weight: 600;          /* SemiBold */
-
-  line-height: 100%;         /* 1 */
-  letter-spacing: 0;
-  text-transform: uppercase; /* Uppercase */
+  font-weight: 600;          
+  line-height: 120%;         
+  letter-spacing: -0.02em;
+  text-transform: uppercase; 
   color: var(--color-primary);
   padding-bottom: 25px;
 
+  font-size: 24px; 
 }
+
 
 .container {
   width: 100%;
-  max-width: 1280px; /* или 1440, зависит от макета */
+  max-width: 1280px; 
   margin: 0 auto;
-  padding-left: 1rem; /* 16px */
+  padding-left: 1rem;        
   padding-right: 1rem;
   padding-bottom: 30px;
-    font-size: 26px;
-  
+
 }
+
 
 @media (min-width: 768px) {
   .container {
-    padding-left: 2rem; /* 32px */
+    padding-left: 2rem;      /* 32px */
     padding-right: 2rem;
   }
   .title {
-      font-size: 26px;
+    font-size: 28px; 
   }
 }
 
 @media (min-width: 1280px) {
   .container {
-    padding-left: 1rem; /* 48px */
-    padding-right: 1rem;
 
+    padding-left: 2rem;      
+    padding-right: 2rem;
   }
-    .title {
-      font-size: 38px;
+  .title {
+    font-size: 38px; 
   }
-}
-
-:root {
-    --site-bg: #EDEEEF;
-      --color-primary: #1A32AF;
-}
-
-html, body {
-  background-color: var(--site-bg);
 }

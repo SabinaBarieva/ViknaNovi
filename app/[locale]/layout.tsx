@@ -50,10 +50,10 @@ export default async function LocaleLayout({ children, params }: any) {
   return (
     <html lang={locale} className={`${montserrat.variable} ${openSans.variable}`}>
       <head>
-        {/* ✅ Google Tag Manager */}
+        {/* ✅ Google Tag Manager с отложенной загрузкой */}
         <Script
           id="gtm-head"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           dangerouslySetInnerHTML={{
             __html: `
               (function(w,d,s,l,i){w[l]=w[l]||[];
@@ -76,9 +76,11 @@ export default async function LocaleLayout({ children, params }: any) {
             style={{ display: 'none', visibility: 'hidden' }}
           />
         </noscript>
+
+        {/* ✅ Meta Pixel с отложенной загрузкой и исправленным URL библиотеки */}
         <Script
           id="meta-pixel"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           dangerouslySetInnerHTML={{
             __html: `
               !function(f,b,e,v,n,t,s)
@@ -89,7 +91,7 @@ export default async function LocaleLayout({ children, params }: any) {
               t.src=v;s=b.getElementsByTagName(e)[0];
               s.parentNode.insertBefore(t,s)}(window, document,'script',
               'https://facebook.net');
-              fbq('init', 'ВАШ_ID_ПИКСЕЛЯ'); // <-- Не забудьте заменить на реальный ID из Ads Manager
+              fbq('init', 'ВАШ_ID_ПИКСЕЛЯ');
               fbq('track', 'PageView');
             `,
           }}

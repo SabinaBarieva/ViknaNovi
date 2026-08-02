@@ -81,8 +81,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function HomePage({ params }: Props) {
   const rawLocale = (await params)?.locale || 'uk';
   
-  // ✅ ИСПРАВЛЕНО: Явно приводим тип string к литеральному типу 'uk' | 'ru', 
-  // чтобы TypeScript не ругался при передаче пропса в SeoJsonLd и SaleSliderServer
+
   const locale = (rawLocale === 'ru' ? 'ru' : 'uk') as 'uk' | 'ru';
   const isRu = locale === 'ru';
 
@@ -95,7 +94,7 @@ export default async function HomePage({ params }: Props) {
           : 'Металопластикові вікна та двері — продаж і монтаж'}
       </h1>
 
-      {/* Теперь тип совпадает идеально, ошибка исчезнет */}
+
       <SeoJsonLd locale={locale} />
 
       {/* Sections */}
