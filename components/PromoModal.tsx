@@ -281,7 +281,7 @@ export default function PromoModal() {
     onAccept={(value: string, mask: any) => {
       setForm({
         ...form,
-        phone: mask.value, 
+         phone: mask?.value || value || "",  
       });
 
       setErrors({
