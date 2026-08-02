@@ -47,22 +47,22 @@ export default function PromoModal() {
 
   useEffect(() => setMounted(true), []);
 
-
+  // ✅ УМНЫЙ ТРИГГЕР ПОЯВЛЕНИЯ (Решает проблему Пункта 01 и 06 аудита)
   useEffect(() => {
-
+    // Если пользователь уже видел или закрывал окно в этой сессии, больше не беспокоим его
     if (typeof window !== "undefined" && sessionStorage.getItem("promo_shown")) {
       return;
     }
 
     const showModal = () => {
       setOpen(true);
-      setStartedAt(Date.now()); 
+      setStartedAt(Date.now()); // Перезапускаем таймер заполнения формы для анти-бот защиты
       sessionStorage.setItem("promo_shown", "true");
       window.removeEventListener("scroll", handleScroll);
       clearTimeout(timeTimer);
     };
 
-
+    // Триггер 1: По скроллу (пользователь пролистал 40% страницы)
     const handleScroll = () => {
       const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
       if (scrollPercent > 40) {
@@ -70,6 +70,7 @@ export default function PromoModal() {
       }
     };
 
+    // Триггер 2: По времени (если пользователь завис на первом экране более 15 секунд)
     const timeTimer = setTimeout(() => {
       showModal();
     }, 15000);
@@ -181,7 +182,8 @@ export default function PromoModal() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm animate-fadeIn">
       <div className="relative w-full max-w-sm overflow-hidden rounded-2xl bg-[#0B0F1A] p-6 text-white shadow-xl">
-
+        {/* CLOSE */}
+        {/* ✅ ИСПРАВЛЕНО: Кнопка закрытия получила тип button, увеличенный размер 44x44px и aria-label (Пункт 15) */}
         <button
           type="button"
           onClick={() => setOpen(false)}
@@ -269,38 +271,36 @@ export default function PromoModal() {
           </div>
 
           {/* PHONE */}
- {/* PHONE */}
-<div>
-  <IMaskInput
-    type="tel"
-    inputMode="tel"
-    mask="+38 (000) 000-00-00"
-    name="phone"
-    value={form.phone}
+          <div>
+            <IMaskInput
 
-    onAccept={(value: string, mask: any) => {
-      setForm({
-        ...form,
-         phone: mask?.value || value || "",  
-      });
+              type="tel"
+              inputMode="tel"
+              mask="+38 (000) 000-00-00"
+              name="phone"
+              value={form.phone}
+              onAccept={(value: any) => {
+                setForm({
+                  ...form,
+                  phone: value,
+                });
 
-      setErrors({
-        ...errors,
-        phone: "",
-      });
-    }}
-    placeholder={t("phone")}
-    className="w-full rounded-lg bg-black/40 border border-white/10 px-4 py-3 text-[16px] font-opensans"
-    required
-  />
+                setErrors({
+                  ...errors,
+                  phone: "",
+                });
+              }}
+              placeholder={t("phone")}
+              className="w-full rounded-lg bg-black/40 border border-white/10 px-4 py-3 text-[16px] font-opensans"
+              required
+            />
 
-  {errors.phone && (
-    <p className="text-red-400 text-sm mt-1">
-      {errors.phone}
-    </p>
-  )}
-</div>
-
+            {errors.phone && (
+              <p className="text-red-400 text-sm mt-1">
+                {errors.phone}
+              </p>
+            )}
+          </div>
 
           {/* 🕳 Honeypot */}
           <input

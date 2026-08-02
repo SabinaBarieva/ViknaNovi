@@ -3,25 +3,24 @@ import nodemailer from "nodemailer";
 
 export async function POST(req: Request) {
   try {
-    const {
-      name,
-      phone,
-      email,
-      message,
-      city,
-      token,
-      company,
-      startedAt,
-    } = await req.json();
+    const body = await req.json();
 
-    if (!name || !phone) {
+    const name = body?.name || "";
+    const phone = body?.phone || "";
+    const email = body?.email || "";
+    const message = body?.message || "";
+    const city = body?.city || "";
+    const token = body?.token || "";
+    const company = body?.company || "";
+    const startedAt = body?.startedAt || "";
+
+    if (!name.trim() || !phone.trim()) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    // 🕳 Honeypot: скрытое поле должно быть пустым
     if (company) {
       return NextResponse.json(
         { error: "Bot detected" },
@@ -29,10 +28,19 @@ export async function POST(req: Request) {
       );
     }
 
-    // ⏱ Если форма отправлена быстрее 3 секунд — блок
-    if (!startedAt || Date.now() - Number(startedAt) < 3000) {
+    if (!startedAt) {
       return NextResponse.json(
-        { error: "Too fast" },
+        { error: "Missing time token" },
+        { status: 400 }
+      );
+    }
+
+    const timeSpent = Math.abs(Date.now() - Number(startedAt));
+    console.log("Время заполнения формы (мс):", timeSpent);
+
+    if (timeSpent === 0) {
+      return NextResponse.json(
+        { error: "Too fast / Bot action detected" },
         { status: 400 }
       );
     }
@@ -44,20 +52,23 @@ export async function POST(req: Request) {
       );
     }
 
+    const turnstileSecret = process.env.TURNSTILE_SECRET || process.env.NEXT_PUBLIC_TURNSTILE_SECRET;
+
     const verify = await fetch(
-      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+      "https://cloudflare.com",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: `secret=${process.env.TURNSTILE_SECRET}&response=${token}`,
+        body: `secret=${turnstileSecret}&response=${token}`,
       }
     );
 
     const captcha = await verify.json();
 
     if (!captcha.success) {
+      console.error("КРИТИЧЕСКАЯ ОШИБКА КАПЧИ НА СЕРВЕРЕ (Проверьте ключи в Vercel Settings):", captcha);
       return NextResponse.json(
         { error: "Captcha failed" },
         { status: 400 }
@@ -65,11 +76,17 @@ export async function POST(req: Request) {
     }
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "://gmail.com",
+      port: 587,
+      secure: false, 
+      requireTLS: true,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
+      tls: {
+        rejectUnauthorized: false 
+      }
     });
 
     const isPromo = Boolean(city);
@@ -96,8 +113,12 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ ok: true });
-  } catch (error) {
+  } catch (error: any) {
     console.error("SEND FORM ERROR:", error);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    
+    return NextResponse.json(
+      { error: "Server error", details: error?.message || String(error) }, 
+      { status: 500 }
+    );
   }
 }
